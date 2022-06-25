@@ -1,12 +1,12 @@
 defmodule Tanks.Gaming.Components.Player do
   alias __MODULE__
 
-  defstruct [:name, :id, :owner?, :ready?, :sprite]
+  defstruct [:user, :host?, :ready?, :sprite]
 
   @type t :: %Player{
-          name: String.t(),
-          id: number(),
-          owner?: boolean(),
+          # TODO: update user type
+          # user: %User{},
+          host?: boolean(),
           ready?: boolean(),
           sprite: String.t()
         }

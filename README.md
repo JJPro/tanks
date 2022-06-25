@@ -14,7 +14,7 @@ When user enters a room, he/she can choose to be a player or observer.
 A room can have a maximum of 4 players.
 When the players seats are full, any subsequent entrants will only be provided the option to observe.
 It requires at least two players to start the game.
-The room owner is shown a option to start the game when player numbers satisfies the aforementioned requirements.
+The host is shown a option to start the game when player numbers satisfies the aforementioned requirements.
 A 7-second countdown appears after game start.
 During the gameplay, new comers are given the option to observe
 (Popup alert with button such that "Game already started, click to observe").
