@@ -1,0 +1,28 @@
+<h2 class="text-center">Welcome</h2>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3">
+
+      <.form let={f} for={@conn} action={Routes.auth_path(@conn, :login_request)} as={:user}>
+        <%= if @error_message do %>
+          <div class="alert alert-danger">
+            <p><%= @error_message %></p>
+          </div>
+        <% end %>
+
+        <div class="form-group">
+          <%= email_input f, :email, placeholder: "Enter email", required: true %>
+        </div>
+
+        <div class="form-group">
+          <%= submit "Log In", class: "btn btn-info btn-block" %>
+          <small class="form-text text-muted">
+            Don't have an account?
+            <%= link "Register", to: Routes.auth_path(@conn, :register_view) %>
+          </small>
+        </div>
+      </.form>
+      
+    </div>
+  </div>
+</div>

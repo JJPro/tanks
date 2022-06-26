@@ -1,0 +1,5 @@
+<h2 class="text-center">Welcome</h2>
+
+<%= render TanksWeb.UserView, "form.html", action: Routes.auth_path(@conn, :register_request), changeset: @changeset %>
+
+<p class="text-center"><%= link "Home", to: Routes.page_path(@conn, :index) %></p>
