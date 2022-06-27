@@ -4,8 +4,7 @@ defmodule Tanks.Gaming.Components.Player do
   defstruct [:user, :host?, :ready?, :sprite]
 
   @type t :: %Player{
-          # TODO: update user type
-          # user: %User{},
+          user: %Tanks.Accounts.User{},
           host?: boolean(),
           ready?: boolean(),
           sprite: String.t()
