@@ -3,7 +3,7 @@ defmodule Tanks.Gaming.Game do
   # Create and manage game state
   """
 
-  alias Tanks.Gaming.Components.{Missile, Tank, Steel, Brick, Player}
+  alias Tanks.Gaming.Artifacts.{Missile, Tank, Steel, Brick, Player}
 
   @moves %{
     up: {0, -1},
@@ -12,7 +12,7 @@ defmodule Tanks.Gaming.Game do
     right: {1, 0}
   }
 
-  @type game :: %{
+  @type t :: %{
           canvas: %{width: non_neg_integer(), height: non_neg_integer()},
           tanks: [Tank.t()],
           missiles: [Missile.t()],
@@ -26,9 +26,9 @@ defmodule Tanks.Gaming.Game do
   @doc """
   Creates a new game structure
   """
-  @spec game([Player.t()]) :: game()
+  @spec game([Player.t()]) :: t()
   def game(players) do
-    map = Tanks.Gaming.Components.Map.get_a_map()
+    map = Tanks.Gaming.Artifacts.Map.get_a_map()
 
     tanks =
       [
@@ -52,13 +52,13 @@ defmodule Tanks.Gaming.Game do
   @doc """
   Generates client view of game state, which will later be sent to client as json
   """
-  @spec client_view(game()) :: game()
+  @spec client_view(t()) :: t()
   def client_view(game), do: game
 
   @doc """
   Move given player's tank one step forward in specified direction, only when the move is valid
   """
-  @spec move(game(), integer(), direction()) :: game()
+  @spec move(t(), integer(), direction()) :: t()
   def move(game, player_id, direction) do
     tanks =
       game.tanks
@@ -86,7 +86,7 @@ defmodule Tanks.Gaming.Game do
 
   Player's tank emits a missile, add the missile to game
   """
-  @spec fire(game(), integer()) :: game()
+  @spec fire(t(), integer()) :: t()
   def fire(game, player_id) do
     tank = Enum.find(game.tanks, &(&1.player.user.id == player_id))
 
@@ -107,7 +107,7 @@ defmodule Tanks.Gaming.Game do
   @doc """
   Step to the next state of the game, absent of player operations.
   """
-  @spec step(game()) :: game()
+  @spec step(t()) :: t()
   def step(game) do
     game
     |> update_location_of_missiles
@@ -130,7 +130,7 @@ defmodule Tanks.Gaming.Game do
   # Updates location of missiles in the game
   # - removes missiles that are out of bounds
   # - move missile one step forward in its direction
-  @spec update_location_of_missiles(game()) :: game()
+  @spec update_location_of_missiles(t()) :: t()
   defp update_location_of_missiles(game) do
     missiles =
       for missile <- game.missiles, within_bounds?(missile, game) do
@@ -148,14 +148,14 @@ defmodule Tanks.Gaming.Game do
   end
 
   # Determine whether a game artifact is in bounds of scene
-  @spec within_bounds?(object(), game()) :: boolean()
+  @spec within_bounds?(object(), t()) :: boolean()
   defp within_bounds?(object, game) do
     object.x >= 0 and object.x + object.width <= game.canvas.width and
       object.y >= 0 and object.y + object.height <= game.canvas.height
   end
 
   # Removes missiles that collide with each another
-  @spec handle_missile_hits_missiles(game()) :: game()
+  @spec handle_missile_hits_missiles(t()) :: t()
   defp handle_missile_hits_missiles(game) do
     missiles =
       for missile <- game.missiles,
@@ -176,7 +176,7 @@ defmodule Tanks.Gaming.Game do
   #   - decrease tank hp
   #     - remove tank if hp is 0
   #     - add to game.dead_tanks
-  @spec handle_missile_hits_objects(game()) :: game()
+  @spec handle_missile_hits_objects(t()) :: t()
   defp handle_missile_hits_objects(game) do
     Enum.reduce(game.missiles, game, fn missile, game ->
       with brick = Enum.find(game.bricks, &missile_hit?(missile, &1)),

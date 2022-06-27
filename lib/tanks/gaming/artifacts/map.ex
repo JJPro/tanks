@@ -1,5 +1,5 @@
-defmodule Tanks.Gaming.Components.Map do
-  alias Tanks.Gaming.Components.{Brick, Steel}
+defmodule Tanks.Gaming.Artifacts.Map do
+  alias Tanks.Gaming.Artifacts.{Brick, Steel}
 
   @width 26
   @height 26

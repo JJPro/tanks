@@ -1,12 +1,11 @@
-defmodule Tanks.Gaming.Components.Steel do
+defmodule Tanks.Gaming.Artifacts.Brick do
   alias __MODULE__
-
   @width 1
   @height 1
 
   defstruct x: 0, y: 0, width: @width, height: @height
 
-  @type t :: %Steel{
+  @type t :: %Brick{
           x: integer(),
           y: integer(),
           width: unquote(@width),

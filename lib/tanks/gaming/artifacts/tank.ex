@@ -1,4 +1,4 @@
-defmodule Tanks.Gaming.Components.Tank do
+defmodule Tanks.Gaming.Artifacts.Tank do
   alias __MODULE__
 
   @enforce_keys [:orientation, :player]
@@ -16,7 +16,7 @@ defmodule Tanks.Gaming.Components.Tank do
 
   @type t :: %Tank{
           orientation: atom(),
-          player: Tanks.Gaming.Components.Player.t(),
+          player: Tanks.Gaming.Artifacts.Player.t(),
           # sprite: String.t(),
           x: integer(),
           y: integer(),

@@ -1,4 +1,4 @@
-defmodule Tanks.Gaming.Components.Missile do
+defmodule Tanks.Gaming.Artifacts.Missile do
   alias __MODULE__
 
   @width 0.2

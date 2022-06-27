@@ -1,4 +1,4 @@
-defmodule Tanks.Gaming.Components.Player do
+defmodule Tanks.Gaming.Artifacts.Player do
   alias __MODULE__
 
   defstruct [:user, :host?, :ready?, :sprite]
