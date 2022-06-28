@@ -1,9 +1,9 @@
-<header>
-  <nav>
-  
-  </nav>
+<header class="container">
+  <%= if @conn.private.phoenix_view != TanksWeb.AuthView do %>
+    <%= render "nav.html", assigns %>
+  <% end %>
 </header>
-<main class="container">
+<main>
   <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
   <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
   <%= @inner_content %>

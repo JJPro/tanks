@@ -4,3 +4,8 @@
 
 @import 'tailwind-customization';
 @import 'phoenix';
+
+#banner-image {
+  background-image: url(/images/banner.jpg);
+  @apply w-full mx-auto max-w-[1737px] aspect-[3/1] lg:aspect-[4.64/1] bg-center bg-no-repeat;
+}

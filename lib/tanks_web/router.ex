@@ -17,7 +17,6 @@ defmodule TanksWeb.Router do
     plug :accepts, ["json"]
   end
 
-  # TODO delete this route if unused
   scope "/", TanksWeb do
     pipe_through :browser
 
