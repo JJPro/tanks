@@ -45,7 +45,9 @@ defmodule Tanks.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:tailwind, "~> 0.1.6", runtime: Mix.env() == :dev},
+      {:dart_sass, "~> 0.5", runtime: Mix.env() == :dev}
     ]
   end
 
@@ -61,7 +63,23 @@ defmodule Tanks.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.deploy": ["esbuild default --minify", "phx.digest"]
+      "assets.deploy": [
+        "esbuild default --minify",
+        "sass default --no-source-map",
+        "tailwind default --minify",
+        "phx.digest"
+      ]
     ]
+  end
+
+  @doc false
+  # Used in `watchers` config in `dev.exs`
+  def tailwind_watcher do
+    path = Path.expand("./priv/static/assets/app.tailwind.css", __DIR__)
+    if not File.exists?(path) do
+      DartSass.install_and_run(:default, ~w(--embed-source-map --source-map-urls=absolute))
+    end
+
+    Tailwind.install_and_run(:default, ~w(--watch))
   end
 end
