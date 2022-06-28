@@ -5,12 +5,12 @@ defmodule TanksWeb.AuthController do
   alias Tanks.Accounts.User
   alias TanksWeb.UserAuth
 
-  def register_view(conn, _params) do
+  def register(conn, _params) do
     changeset = Accounts.change_user(%User{})
     render(conn, "register.html", changeset: changeset)
   end
 
-  def register_request(conn, %{"user" => user_params}) do
+  def register_handler(conn, %{"user" => user_params}) do
     case Accounts.register_user(user_params) do
       {:ok, user} ->
         conn
@@ -22,11 +22,11 @@ defmodule TanksWeb.AuthController do
     end
   end
 
-  def login_view(conn, _params) do
+  def login(conn, _params) do
     render(conn, "login.html", error_message: nil)
   end
 
-  def login_request(conn, %{"user" => user_params}) do
+  def login_handler(conn, %{"user" => user_params}) do
     %{"email" => email} = user_params
 
     if user = Accounts.get_user_by_email(email) do
@@ -36,7 +36,7 @@ defmodule TanksWeb.AuthController do
     end
   end
 
-  def logout_request(conn, _params) do
+  def logout_handler(conn, _params) do
     conn
     |> put_flash(:info, "Logged out successfully.")
     |> UserAuth.log_out_user()

@@ -1,28 +1,25 @@
-<h2 class="text-center">Welcome</h2>
-<div class="container">
-  <div class="row">
-    <div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3">
+<div class="py-4">
+  <h1 class="font-semibold text-4xl text-center my-8">
+    Welcome to Tanks!
+  </h1>
 
-      <.form let={f} for={@conn} action={Routes.auth_path(@conn, :login_request)} as={:user}>
-        <%= if @error_message do %>
-          <div class="alert alert-danger">
-            <p><%= @error_message %></p>
-          </div>
-        <% end %>
+  <div class="container max-w-md mx-auto">
 
-        <div class="form-group">
-          <%= email_input f, :email, placeholder: "Enter email", required: true %>
+    <.form let={f} for={@conn} action={Routes.auth_path(@conn, :login_handler)} as={:user}>
+      <%= if @error_message do %>
+        <div class="alert alert-danger">
+          <p><%= @error_message %></p>
         </div>
+      <% end %>
 
-        <div class="form-group">
-          <%= submit "Log In", class: "btn btn-info btn-block" %>
-          <small class="form-text text-muted">
-            Don't have an account?
-            <%= link "Register", to: Routes.auth_path(@conn, :register_view) %>
-          </small>
-        </div>
-      </.form>
-      
-    </div>
+      <%= email_input f, :email, placeholder: "Enter email", required: true %>
+
+      <%= submit "Log In", class: "btn btn-solid w-full mt-4" %>
+      <small class="text-gray-500">
+        Don't have an account?
+        <%= link "Register", to: Routes.auth_path(@conn, :register) %>
+      </small>
+    </.form>
+    
   </div>
 </div>

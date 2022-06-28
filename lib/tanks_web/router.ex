@@ -35,16 +35,16 @@ defmodule TanksWeb.Router do
   scope "/auth", TanksWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 
-    get "/register", AuthController, :register_view
-    post "/register", AuthController, :register_request
-    get "/login", AuthController, :login_view
-    post "/login", AuthController, :login_request
+    get "/register", AuthController, :register
+    post "/register", AuthController, :register_handler
+    get "/login", AuthController, :login
+    post "/login", AuthController, :login_handler
   end
 
   scope "/", TanksWeb do
     pipe_through [:browser, :require_authenticated_user]
 
-    delete "/log_out", AuthController, :logout_request
+    delete "/log_out", AuthController, :logout_handler
     resources "/users", UserController, only: [:show, :edit, :update]
   end
 
