@@ -241,7 +241,9 @@ defmodule Tanks.Gaming.Game do
   end
 
   defp missile_hit?(missile, obj)
-       when is_struct(obj, Tank) or is_struct(obj, Brick) or is_struct(obj, Steel) do
+       when is_struct(obj, Tank)
+       when is_struct(obj, Brick)
+       when is_struct(obj, Steel) do
     collide?(missile, obj)
   end
 
