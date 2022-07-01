@@ -2,6 +2,8 @@ defmodule Tanks.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive {Jason.Encoder, only: [:email, :name]}
+
   schema "users" do
     field :email, :string
     field :name, :string

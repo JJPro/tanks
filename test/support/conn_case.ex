@@ -35,4 +35,11 @@ defmodule TanksWeb.ConnCase do
     Tanks.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
+
+  @spec log_user_in(Plug.Conn.t(), %Tanks.Accounts.User{}) :: Plug.Conn.t()
+  def log_user_in(conn, user) do
+    conn
+    |> Phoenix.ConnTest.init_test_session(%{})
+    |> Plug.Conn.put_session(:user_email, user.email)
+  end
 end

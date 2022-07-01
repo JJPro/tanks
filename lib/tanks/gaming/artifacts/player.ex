@@ -1,11 +1,11 @@
 defmodule Tanks.Gaming.Artifacts.Player do
   alias __MODULE__
 
-  defstruct [:user, :host?, :ready?, :sprite]
+  @enforce_keys [:user, :sprite]
+  defstruct [user: nil, ready?: false, sprite: nil]
 
   @type t :: %Player{
           user: %Tanks.Accounts.User{},
-          host?: boolean(),
           ready?: boolean(),
           sprite: String.t()
         }

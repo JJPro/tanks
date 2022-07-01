@@ -29,7 +29,7 @@ defmodule Tanks.AccountsTest do
     end
 
     test "register_user/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Accounts.create_user(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Accounts.register_user(@invalid_attrs)
     end
 
     test "update_user/2 with valid data updates the user" do

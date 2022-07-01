@@ -11,8 +11,8 @@ defmodule Tanks.AccountsFixtures do
     {:ok, user} =
       attrs
       |> Enum.into(%{
-        email: "user@example.com",
-        name: "some name"
+        email: "user" <> to_string(:rand.uniform) <> "@example.com",
+        name: Enum.random(~w(Jason Jeff Bard Hellen Franck Kevin Dale Jessica))
       })
       |> Tanks.Accounts.register_user()
 

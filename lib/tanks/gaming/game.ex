@@ -18,6 +18,7 @@ defmodule Tanks.Gaming.Game do
           missiles: [Missile.t()],
           bricks: [Brick.t()],
           steels: [Steel.t()],
+          # WARN remove if unused
           dead_tanks: [Tank.t()]
         }
   @type direction :: :up | :down | :left | :right
@@ -26,8 +27,8 @@ defmodule Tanks.Gaming.Game do
   @doc """
   Creates a new game structure
   """
-  @spec game([Player.t()]) :: t()
-  def game(players) do
+  @spec new([Player.t()]) :: t()
+  def new(players) do
     map = Tanks.Gaming.Artifacts.Map.get_a_map()
 
     tanks =
@@ -50,20 +51,14 @@ defmodule Tanks.Gaming.Game do
   end
 
   @doc """
-  Generates client view of game state, which will later be sent to client as json
-  """
-  @spec client_view(t()) :: t()
-  def client_view(game), do: game
-
-  @doc """
   Move given player's tank one step forward in specified direction, only when the move is valid
   """
   @spec move(t(), integer(), direction()) :: t()
-  def move(game, player_id, direction) do
+  def move(game, player_uid, direction) do
     tanks =
       game.tanks
       |> Enum.map(fn t ->
-        if t.player.user.id == player_id and legal_move?(game, t, direction) do
+        if t.player.user.id == player_uid and legal_move?(game, t, direction) do
           {dx, dy} = @moves[direction]
 
           changeset = %{
@@ -87,8 +82,8 @@ defmodule Tanks.Gaming.Game do
   Player's tank emits a missile, add the missile to game
   """
   @spec fire(t(), integer()) :: t()
-  def fire(game, player_id) do
-    tank = Enum.find(game.tanks, &(&1.player.user.id == player_id))
+  def fire(game, player_uid) do
+    tank = Enum.find(game.tanks, &(&1.player.user.id == player_uid))
 
     opts =
       case tank.orientation do
@@ -113,6 +108,11 @@ defmodule Tanks.Gaming.Game do
     |> update_location_of_missiles
     |> handle_missile_hits_missiles
     |> handle_missile_hits_objects
+  end
+
+  @spec gameover?(t()) :: boolean()
+  def gameover?(game) do
+    length(game.tanks) <= 1
   end
 
   defp legal_move?(game, tank, direction) do

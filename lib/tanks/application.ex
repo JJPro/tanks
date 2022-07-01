@@ -15,9 +15,10 @@ defmodule Tanks.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Tanks.PubSub},
       # Start the Endpoint (http/https)
-      TanksWeb.Endpoint
+      TanksWeb.Endpoint,
       # Start a worker by calling: Tanks.Worker.start_link(arg)
       # {Tanks.Worker, arg}
+      Tanks.Store.RoomStore
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

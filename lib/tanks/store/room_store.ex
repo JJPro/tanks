@@ -1,9 +1,9 @@
 defmodule Tanks.Store.RoomStore do
-  use Agent
+  use Agent, restart: :permanent
   alias Tanks.Gaming.Room
 
-  @spec start_link() :: Agent.on_start()
-  def start_link do
+  @spec start_link(list()) :: Agent.on_start()
+  def start_link(_opts) do
     Agent.start_link(fn -> %{} end, name: __MODULE__)
   end
 

@@ -3,7 +3,6 @@ defmodule TanksWeb.UserControllerTest do
 
   import Tanks.AccountsFixtures
 
-  @create_attrs %{email: "one@example.com", name: "some name"}
   @update_attrs %{email: "updated@example.com", name: "some updated name"}
   @invalid_attrs %{email: "invalid email", name: nil}
 
@@ -11,7 +10,11 @@ defmodule TanksWeb.UserControllerTest do
     setup [:create_user]
 
     test "renders form for editing chosen user", %{conn: conn, user: user} do
-      conn = get(conn, Routes.user_path(conn, :edit, user))
+      conn =
+        conn
+        |> log_user_in(user)
+        |> get(Routes.user_path(conn, :edit, user))
+
       assert html_response(conn, 200) =~ "Edit User"
     end
   end
@@ -20,15 +23,20 @@ defmodule TanksWeb.UserControllerTest do
     setup [:create_user]
 
     test "redirects when data is valid", %{conn: conn, user: user} do
-      conn = put(conn, Routes.user_path(conn, :update, user), user: @update_attrs)
-      assert redirected_to(conn) == Routes.user_path(conn, :show, user)
+      conn =
+        conn
+        |> log_user_in(user)
+        |> put(Routes.user_path(conn, :update, user), user: @update_attrs)
 
-      conn = get(conn, Routes.user_path(conn, :show, user))
-      assert html_response(conn, 200) =~ "some updated email"
+      assert redirected_to(conn) == Routes.user_path(conn, :show, user)
     end
 
     test "renders errors when data is invalid", %{conn: conn, user: user} do
-      conn = put(conn, Routes.user_path(conn, :update, user), user: @invalid_attrs)
+      conn =
+        conn
+        |> log_user_in(user)
+        |> put(Routes.user_path(conn, :update, user), user: @invalid_attrs)
+
       assert html_response(conn, 200) =~ "Edit User"
     end
   end
