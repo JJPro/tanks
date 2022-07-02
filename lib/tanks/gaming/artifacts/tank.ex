@@ -1,10 +1,11 @@
 defmodule Tanks.Gaming.Artifacts.Tank do
   alias __MODULE__
 
-  @enforce_keys [:orientation, :player]
   @width 2
   @height 2
 
+  @enforce_keys [:orientation, :player]
+  @derive Jason.Encoder
   defstruct x: 0,
             y: 0,
             width: @width,
@@ -12,12 +13,10 @@ defmodule Tanks.Gaming.Artifacts.Tank do
             hp: 4,
             orientation: nil,
             player: nil
-            # sprite: ""
 
   @type t :: %Tank{
           orientation: atom(),
           player: Tanks.Gaming.Artifacts.Player.t(),
-          # sprite: String.t(),
           x: integer(),
           y: integer(),
           width: unquote(@width),

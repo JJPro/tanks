@@ -4,6 +4,7 @@ defmodule Tanks.Gaming.Artifacts.Map do
   @width 26
   @height 26
 
+  @derive Jason.Encoder
   defstruct width: @width, height: @height, bricks: [], steels: []
 
   @typep coord :: %{x: 0..unquote(@width), y: 0..unquote(@height)}

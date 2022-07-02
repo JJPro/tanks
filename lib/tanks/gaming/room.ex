@@ -10,6 +10,7 @@ defmodule Tanks.Gaming.Room do
   alias Tanks.Gaming.{Game, GameServer}
   alias Tanks.Accounts.User
 
+  @derive Jason.Encoder
   defstruct name: "", players: [], game: nil
 
   @type t :: %Room{

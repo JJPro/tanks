@@ -2,6 +2,7 @@ defmodule Tanks.Gaming.Artifacts.Player do
   alias __MODULE__
 
   @enforce_keys [:user, :sprite]
+  @derive Jason.Encoder
   defstruct [user: nil, ready?: false, sprite: nil]
 
   @type t :: %Player{

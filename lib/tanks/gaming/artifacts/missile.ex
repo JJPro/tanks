@@ -5,6 +5,7 @@ defmodule Tanks.Gaming.Artifacts.Missile do
   @height 0.2
   @speed 0.4
 
+  @derive Jason.Encoder
   defstruct x: 0, y: 0, width: @width, height: @height, direction: nil, speed: @speed
 
   @type t :: %Missile{
