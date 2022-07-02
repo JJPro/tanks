@@ -18,7 +18,7 @@ defmodule Tanks.Store.RoomStore do
   @doc """
   Fetches the room with the given `name`
   """
-  @spec get(String.t()) :: Room.t()
+  @spec get(String.t()) :: Room.t() | nil
   def get(name) do
     Agent.get(__MODULE__, &Map.get(&1, name))
   end

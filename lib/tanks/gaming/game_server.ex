@@ -12,14 +12,12 @@ defmodule Tanks.Gaming.GameServer do
   The Game Loop broadcasts the following messages at various stages,
   those messages are supposed to be handled by the topics' PubSub subscribers (e.g. channel client JS).
 
-  | at event     | pubsub topic   | payload                      |
-  | ------------ | -------------- | ---------------------------- |
-  | gamestart    | room:room_name | -                            |
-  | game_tick    | game:room_name | %{game: game}                |
-  | gameover     | game:room_name | -                            |
-  | room_changed | room:room_name | %{room: room}                |
-  | room_changed | lobby          | %{room: {room_name, status}} |
-  status = :open | :full | :in_game
+  | stage     | event       | pubsub topics         | payload       |
+  | --------- | ------------| --------------------- | ------------- |
+  | gamestart | gamestart   | room:room_name        | -             |
+  | the loop  | game_tick   | game:room_name        | %{game: game} |
+  | gameover  | gameover    | game:room_name        | -             |
+  | gameover  | room_change | lobby, room:room_name | %{room: room} |
   """
   use GenServer
 
@@ -36,9 +34,8 @@ defmodule Tanks.Gaming.GameServer do
     {:ok, pid} = GenServer.start_link(__MODULE__, {room_name, game})
     Process.send(pid, :loop, [])
 
-    # broadcast to all concerned channels
+    # broadcast gamestart event to room
     #   this is used for:
-    #     - update room status in the lobby
     #     - initiate game start countdown
     :ok = broadcast!(:room, room_name, "gamestart", %{})
     {:ok, pid}
@@ -87,8 +84,8 @@ defmodule Tanks.Gaming.GameServer do
       room = RoomStore.get(room_name)
       {:ok, room} = Room.end_game(room)
       :ok = RoomStore.put(room_name, room)
-      broadcast!(:room, room_name, "room_changed", %{room: room})
-      broadcast!(:lobby, "room_changed", %{room: {room_name, Room.get_status(room)}})
+      broadcast!(:room, room_name, "room_change", %{room: room})
+      broadcast!(:lobby, "room_change", %{room: room})
 
       # signal GenServer process to terminate
       {:stop, :normal, {room_name, nil}}

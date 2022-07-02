@@ -1,6 +1,7 @@
 defmodule Tanks.Gaming.Room do
   @moduledoc """
-  # Manages A Gaming Room
+  # Functions To Update Room Struct
+
   - CRUD of players in the room
   - starts or terminates the game for the room
   """
