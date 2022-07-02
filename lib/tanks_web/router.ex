@@ -2,6 +2,7 @@ defmodule TanksWeb.Router do
   use TanksWeb, :router
 
   import TanksWeb.UserAuth
+  import TanksWeb.UserSocket, only: [put_user_token: 2]
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -11,6 +12,7 @@ defmodule TanksWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_user
+    plug :put_user_token
   end
 
   pipeline :api do

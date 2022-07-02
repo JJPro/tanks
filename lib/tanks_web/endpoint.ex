@@ -43,4 +43,8 @@ defmodule TanksWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug TanksWeb.Router
+
+  socket "/socket", TanksWeb.UserSocket,
+    websocket: true,
+    longpoll: false
 end
