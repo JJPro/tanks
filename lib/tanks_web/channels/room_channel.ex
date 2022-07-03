@@ -2,7 +2,7 @@ defmodule TanksWeb.RoomChannel do
   @moduledoc """
   ## RoomChannel
 
-  The Room Channel handles live connections from individual gaming rooms.
+  The Room Channel handles live communications from individual gaming rooms.
 
   ## Topics
 
