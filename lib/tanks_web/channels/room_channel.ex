@@ -44,7 +44,7 @@ defmodule TanksWeb.RoomChannel do
   and the clients (JS) needs to handle them.
 
   #### Broadcasted From GameServer
-  | event       | message       |
+  | event       | payload       |
   | ----------- | ------------- |
   | gamestart   | -             |
   | room_change | %{room: room} |
