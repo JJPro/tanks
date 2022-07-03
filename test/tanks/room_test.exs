@@ -60,7 +60,7 @@ defmodule Tanks.RoomTest do
     user3 = Enum.at(users, 2)
     {:ok, room} = Room.add_player(room, user2)
     {:ok, room} = Room.add_player(room, user3)
-    room = Room.player_toggle_ready(room, user2)
+    {:ok, room} = Room.player_toggle_ready(room, user2)
 
     assert Enum.all?(room.players, fn player ->
              if player.user == user2, do: player.ready?, else: not player.ready?

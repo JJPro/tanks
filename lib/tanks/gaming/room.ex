@@ -91,7 +91,7 @@ defmodule Tanks.Gaming.Room do
   @doc """
   Player toggles the "Ready" button
   """
-  @spec player_toggle_ready(t(), %User{}) :: t()
+  @spec player_toggle_ready(t(), %User{}) :: {:ok, t()}
   def player_toggle_ready(room, user) do
     players =
       Enum.map(room.players, fn
@@ -99,7 +99,7 @@ defmodule Tanks.Gaming.Room do
         player -> player
       end)
 
-    %{room | players: players}
+    {:ok, %{room | players: players}}
   end
 
   @spec start_game(t()) :: {:ok, t()} | {:error, %{reason: String.t()}}
