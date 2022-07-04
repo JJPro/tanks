@@ -41,12 +41,12 @@ defmodule Tanks.Gaming.GameServer do
     {:ok, pid}
   end
 
-  @spec fire(GenServer.server(), integer()) :: no_return()
+  @spec fire(GenServer.server(), integer()) :: :ok
   def fire(server, player_uid) do
     GenServer.cast(server, {:fire, player_uid})
   end
 
-  @spec move(GenServer.server(), integer(), :up | :down | :left | :right) :: no_return()
+  @spec move(GenServer.server(), integer(), :up | :down | :left | :right) :: :ok
   def move(server, player_uid, direction) do
     GenServer.cast(server, {:move, player_uid, direction})
   end

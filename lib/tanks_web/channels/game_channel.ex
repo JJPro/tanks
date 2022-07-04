@@ -52,7 +52,7 @@ defmodule TanksWeb.GameChannel do
 
   @impl true
   def handle_in("fire", _payload, socket) do
-    GameServer.fire(
+    :ok = GameServer.fire(
       socket.assigns.game,
       socket.assigns.user_id
     )
@@ -62,7 +62,7 @@ defmodule TanksWeb.GameChannel do
 
   @impl true
   def handle_in("move", %{"direction" => direction}, socket) do
-    GameServer.move(
+    :ok = GameServer.move(
       socket.assigns.game,
       socket.assigns.user_id,
       String.to_atom(direction)
