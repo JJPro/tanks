@@ -25,7 +25,6 @@ defmodule TanksWeb.Router do
     get "/", PageController, :index
   end
 
-
   # Other scopes may use custom stacks.
   # scope "/api", TanksWeb do
   #   pipe_through :api
@@ -47,6 +46,6 @@ defmodule TanksWeb.Router do
 
     delete "/log_out", AuthController, :logout_handler
     resources "/users", UserController, only: [:show, :edit, :update]
+    get "/room/:room_name", PageController, :index
   end
-
 end
