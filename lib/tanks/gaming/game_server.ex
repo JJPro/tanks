@@ -12,12 +12,12 @@ defmodule Tanks.Gaming.GameServer do
   The Game Loop broadcasts the following messages at various stages,
   those messages are supposed to be handled by the topics' PubSub subscribers (e.g. channel client JS).
 
-  | stage     | event       | pubsub topics         | payload       |
-  | --------- | ------------| --------------------- | ------------- |
-  | gamestart | gamestart   | room:room_name        | -             |
-  | the loop  | game_tick   | game:room_name        | %{game: game} |
-  | gameover  | gameover    | game:room_name        | -             |
-  | gameover  | room_change | lobby, room:room_name | %{room: room} |
+  | stage     | event       | pubsub topics         | payload                                 |
+  | --------- | ----------- | --------------------- | --------------------------------------- |
+  | gamestart | gamestart   | room:room_name        | -                                       |
+  | the loop  | game_tick   | game:room_name        | %{game: game}                           |
+  | gameover  | gameover    | game:room_name        | -                                       |
+  | gameover  | room_change | lobby, room:room_name | %{room: Room.lobby_view}, %{room: room} |
   """
   use GenServer
 
@@ -85,7 +85,7 @@ defmodule Tanks.Gaming.GameServer do
       {:ok, room} = Room.end_game(room)
       :ok = RoomStore.put(room_name, room)
       broadcast!(:room, room_name, "room_change", %{room: room})
-      broadcast!(:lobby, "room_change", %{room: room})
+      broadcast!(:lobby, "room_change", %{room: Room.lobby_view(room)})
 
       # signal GenServer process to terminate
       {:stop, :normal, {room_name, nil}}

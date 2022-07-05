@@ -8,3 +8,8 @@
   <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
   <%= @inner_content %>
 </main>
+<footer class="pt-8 pb-4">
+  <div class="text-center text-xs font-light text-gray-300">
+    @ <%= Date.utc_today() |> Map.fetch!(:year) %> JJPro.me
+  </div>
+</footer>

@@ -25,15 +25,14 @@ defmodule TanksWeb.RoomChannel do
 
   ### Outgoing Broadcasts to Other Topics
 
-  | stage               | event       | pubsub topics         | payload       |
-  | ------------------- | ----------- | --------------------- | ------------- |
-  | new room created    | room_change | lobby                 | %{room: room} |
-  | player join         | room_change | lobby, room:room_name | %{room: room} |
-  | player leave        | room_change | lobby, room:room_name | %{room: room} |
-  | player kicked out   | room_change | lobby, room:room_name | %{room: room} |
-  | player toggle ready | room_change | room:room_name        | %{room: room} |
-  | host starts game    | room_change | lobby, room:room_name | %{room: room} |
-  | all players leave   | close_room  | lobby, room:room_name | %{room: room} |
+  | stage               | event       | pubsub topics         | payload                                 |
+  | ------------------- | ----------- | --------------------- | --------------------------------------- |
+  | player join         | room_change | lobby, room:room_name | %{room: Room.lobby_view}, %{room: room} |
+  | player leave        | room_change | lobby, room:room_name | %{room: Room.lobby_view}, %{room: room} |
+  | player kicked out   | room_change | lobby, room:room_name | %{room: Room.lobby_view}, %{room: room} |
+  | player toggle ready | room_change | room:room_name        | %{room: room}                           |
+  | host starts game    | room_change | lobby, room:room_name | %{room: Room.lobby_view}, %{room: room} |
+  | all players leave   | close_room  | lobby, room:room_name | %{room: Room.lobby_view}, %{room: room} |
 
 
   ### Passthrough Broadcasts From Other Modules (To Be Handled in Clients)
@@ -62,25 +61,16 @@ defmodule TanksWeb.RoomChannel do
   @doc """
   Channel join:
   Both players and observers are able to join the channel
-  - fetch the room OR creates one and save to store if nonexistent
-  - broadcast room_change event to lobby if the room is newly created
-  - reply room to client
   """
   @impl true
   def join("room:" <> room_name, _payload, socket) do
-    room =
-      case lookup_and_update(socket, fn room, _user -> {:ok, room} end) do
-        {:ok, room} ->
-          room
+    case RoomStore.get(room_name) do
+      %Room{} = room ->
+        {:ok, %{room: room}, socket}
 
-        {:error, :not_found} ->
-          room = Room.new(room_name, socket.assigns.user_id)
-          RoomStore.put(room_name, room)
-          TanksWeb.Endpoint.broadcast!("lobby", "room_change", %{room: room})
-          room
-      end
-
-    {:ok, %{room: room}, socket}
+      nil ->
+        {:error, %{reason: "not found"}}
+    end
   end
 
   ## Player Only Actions
@@ -93,7 +83,9 @@ defmodule TanksWeb.RoomChannel do
                broadcast(socket, "room_change", %{room: updated_room})
 
                if Room.get_status(room) != Room.get_status(updated_room) do
-                 TanksWeb.Endpoint.broadcast!("lobby", "room_change", %{room: updated_room})
+                 TanksWeb.Endpoint.broadcast!("lobby", "room_change", %{
+                   room: Room.lobby_view(updated_room)
+                 })
                end
 
                {:ok, updated_room}
@@ -115,7 +107,9 @@ defmodule TanksWeb.RoomChannel do
           broadcast(socket, "room_change", %{room: updated_room})
 
           if Room.get_status(room) != Room.get_status(updated_room) do
-            TanksWeb.Endpoint.broadcast!("lobby", "room_change", %{room: updated_room})
+            TanksWeb.Endpoint.broadcast!("lobby", "room_change", %{
+              room: Room.lobby_view(updated_room)
+            })
           end
 
           {:ok, updated_room}
@@ -123,7 +117,7 @@ defmodule TanksWeb.RoomChannel do
         {:empty_room, nil} ->
           RoomStore.delete(room.name)
           broadcast(socket, "close_room", nil)
-          TanksWeb.Endpoint.broadcast!("lobby", "close_room", %{room: room})
+          TanksWeb.Endpoint.broadcast!("lobby", "close_room", %{room: Room.lobby_view(room)})
 
           # Return {:error, _} so that the room is not committed back to store
           {:error, "close room"}
@@ -140,7 +134,9 @@ defmodule TanksWeb.RoomChannel do
       broadcast(socket, "room_change", %{room: updated_room})
 
       if Room.get_status(room) != Room.get_status(updated_room) do
-        TanksWeb.Endpoint.broadcast!("lobby", "room_change", %{room: updated_room})
+        TanksWeb.Endpoint.broadcast!("lobby", "room_change", %{
+          room: Room.lobby_view(updated_room)
+        })
       end
 
       {:ok, updated_room}
@@ -166,7 +162,9 @@ defmodule TanksWeb.RoomChannel do
            case Room.start_game(room) do
              {:ok, room} ->
                broadcast(socket, "room_change", %{room: room})
-               TanksWeb.Endpoint.broadcast!("lobby", "room_change", %{room: room})
+
+               TanksWeb.Endpoint.broadcast!("lobby", "room_change", %{room: Room.lobby_view(room)})
+
                {:ok, room}
 
              {:error, _msg} = error ->

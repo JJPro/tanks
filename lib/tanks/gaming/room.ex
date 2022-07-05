@@ -19,6 +19,10 @@ defmodule Tanks.Gaming.Room do
           # game: the GameServer process pid
           game: pid() | nil
         }
+  @type lobby_view :: %{
+    name: String.t(),
+    status: atom()
+  }
 
   @sprites {
     "/images/tank-cyan.png",
@@ -132,6 +136,17 @@ defmodule Tanks.Gaming.Room do
   @spec host(t()) :: Player.t()
   def host(room) do
     List.last(room.players)
+  end
+
+  @doc """
+  Gets the data format that is required to sent to the lobby topic
+  """
+  @spec lobby_view(t()) :: lobby_view()
+  def lobby_view(room) do
+    %{
+      name: room.name,
+      status: get_status(room)
+    }
   end
 
   # Finds the player for given user object, in room

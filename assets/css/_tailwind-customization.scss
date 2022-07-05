@@ -17,7 +17,7 @@
   input[type='url'],
   select,
   textarea {
-    @apply rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent;
+    @apply rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-inset focus:ring-sky-300 focus:border-sky-300;
   }
 
   input:disabled {
@@ -31,14 +31,42 @@
 
 @layer components {
   .btn {
-    @apply inline-block px-12 py-3 text-sm font-medium border border-indigo-600 rounded focus:outline-none focus:ring;
+    @apply inline-block px-12 py-3 text-sm font-medium border border-indigo-600 rounded focus:outline-none focus:ring transition-colors ease-in-out;
   }
 
   .btn-solid {
-    @apply text-white bg-indigo-600 active:text-indigo-500 hover:bg-transparent hover:text-indigo-600;
+    @apply text-white border-0 bg-indigo-600 active:text-indigo-500 hover:bg-indigo-700;
   }
 
   .btn-outline {
     @apply text-indigo-600 hover:bg-indigo-600 hover:text-white active:bg-indigo-500;
+  }
+
+  .btn-group {
+    * {
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+        border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      transition-property: color, background-color, border-color, box-shadow;
+    }
+    .btn {
+      @apply px-4 py-2 box-content;
+    }
+
+    :not(:first-child) {
+      @apply rounded-l-none;
+    }
+
+    :not(:last-child) {
+      @apply rounded-r-none border-r-0;
+    }
+  }
+
+  .divider {
+    @apply flex items-center mx-5 justify-center relative;
+  }
+  .divider::before {
+    content: '';
+    border: lightgray solid 0.5px;
+    @apply absolute w-full -z-10;
   }
 }
