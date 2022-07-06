@@ -15,7 +15,7 @@ defmodule Tanks.Gaming.Artifacts.Tank do
             player: nil
 
   @type t :: %Tank{
-          orientation: atom(),
+          orientation: :up | :down | :left | :right,
           player: Tanks.Gaming.Artifacts.Player.t(),
           x: integer(),
           y: integer(),

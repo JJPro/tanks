@@ -22,3 +22,50 @@ export interface RoomLobbyView {
 }
 
 export type RoomStatus = "open" | "full" | "in_game";
+
+export interface Game {
+  canvas: {
+    width: number; 
+    height: number;
+  }; 
+  tanks: Tank[];
+  missiles: Missile[];
+  bricks: Brick[];
+  steels: Steel[];
+  dead_tanks: Tank[];
+}
+
+export interface Tank {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  hp: number;
+  orientation: Direction;
+  player: Player
+}
+
+export interface Missile {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  direction: Direction;
+  speed: number;
+}
+
+export interface Brick {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface Steel {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export type Direction = 'up' | 'down' | 'left' | 'right';
