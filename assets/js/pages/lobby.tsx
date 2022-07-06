@@ -1,22 +1,12 @@
-import { Channel } from 'phoenix';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import CreateRoomInput from '../components/create-room-input';
 import RoomCard from '../components/room-card';
+import { useChannel } from '../hooks';
 import { RoomLobbyView } from '../types';
-import socket from '../user_socket';
 
 function Lobby() {
   const [rooms, setRooms] = useState<RoomLobbyView[]>([]);
-  const [channel, setChannel] = useState<Channel>();
-
-  useEffect(() => {
-    const channel = socket.channel('lobby');
-    channel
-      .join()
-      .receive('ok', ({ rooms }) => setRooms(rooms))
-      .receive('error', (resp) => console.error('Unable to join', resp));
-    setChannel(channel);
-  }, []);
+  const { channel } = useChannel('lobby', ({rooms}) => setRooms(rooms));
 
   channel?.on('new_room', ({ room }) => {
     setRooms([room, ...rooms]);
