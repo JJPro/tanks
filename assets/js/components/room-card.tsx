@@ -74,7 +74,7 @@ function RoomCard(props: IRoomCard) {
       >
         {status}
       </div>
-      <header className="font-semibold text-2xl mt-2">{name}</header>
+      <header className="font-semibold text-2xl mt-2 grow">{name}</header>
       {status == 'open' && <JoinButton />}
       <ObserveButton />
     </article>

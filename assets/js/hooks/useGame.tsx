@@ -1,7 +1,8 @@
+import React from 'react';
 import { Channel } from "phoenix";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { requireAuth } from "../utils";
+import { badToast, requireAuth } from "../utils";
 
 export function useGame(channel?: Channel) {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ export function useGame(channel?: Channel) {
       .receive('timeout', () => toast.error('Network Error. Try again later.'));
   }
 
-  const joinGame = (room_name: string) => {
+  const joinGame = (room_name?: string) => {
     requireAuth();
 
     channel
@@ -30,5 +31,27 @@ export function useGame(channel?: Channel) {
     navigate(`/room/${room_name}`);
   }
 
-  return { createGame, joinGame, observeGame };
+  const leaveGame = () => {
+    requireAuth();
+
+    channel?.push('leave', {});
+    navigate('/');
+  }
+
+  const toggleReady = () => {
+    requireAuth();
+
+    channel?.push('toggle_ready', {});
+  }
+
+  const startGame = () => {
+    requireAuth();
+
+    channel?.push('start', {})
+      .receive('error', (error) => {
+        badToast(<p>{error.reason}</p>);
+      });
+  }
+
+  return { createGame, joinGame, observeGame, leaveGame, toggleReady, startGame };
 }

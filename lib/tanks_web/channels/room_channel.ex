@@ -23,7 +23,7 @@ defmodule TanksWeb.RoomChannel do
   | toggle_ready | -               |
   | start        | -               |
 
-  ### Outgoing Broadcasts to Other Topics
+  ### Broadcasts to Topics
 
   | stage               | event       | pubsub topics         | payload                                 |
   | ------------------- | ----------- | --------------------- | --------------------------------------- |
@@ -33,6 +33,7 @@ defmodule TanksWeb.RoomChannel do
   | player toggle ready | room_change | room:room_name        | %{room: room}                           |
   | host starts game    | room_change | lobby, room:room_name | %{room: Room.lobby_view}, %{room: room} |
   | all players leave   | close_room  | lobby, room:room_name | %{room: Room.lobby_view}, %{room: room} |
+  | kickout             | kickedout   | room:room_name        | %{room: room, player_uid}               |
 
 
   ### Passthrough Broadcasts From Other Modules (To Be Handled in Clients)
@@ -66,7 +67,8 @@ defmodule TanksWeb.RoomChannel do
   def join("room:" <> room_name, _payload, socket) do
     case RoomStore.get(room_name) do
       %Room{} = room ->
-        {:ok, %{room: room}, socket}
+        %Tanks.Gaming.Artifacts.Player{} = host = Room.host(room)
+        {:ok, %{room: room, user_id: socket.assigns.user_id, host_id: host.user.id}, socket}
 
       nil ->
         {:error, %{reason: "not found"}}
@@ -131,7 +133,7 @@ defmodule TanksWeb.RoomChannel do
   def handle_in("kickout", %{"player_uid" => player_uid}, socket) do
     lookup_and_update(socket, fn room, _host ->
       {:ok, updated_room} = Room.remove_player(room, Accounts.get_user!(player_uid))
-      broadcast(socket, "room_change", %{room: updated_room})
+      broadcast(socket, "kickedout", %{room: updated_room, player_uid: player_uid})
 
       if Room.get_status(room) != Room.get_status(updated_room) do
         TanksWeb.Endpoint.broadcast!("lobby", "room_change", %{

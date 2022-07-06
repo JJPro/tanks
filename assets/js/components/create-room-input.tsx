@@ -1,9 +1,5 @@
 import { Channel } from 'phoenix';
-import React, {
-  KeyboardEvent,
-  ReactElement,
-  useState,
-} from 'react';
+import React, { KeyboardEvent, ReactElement, useState } from 'react';
 import { useDebounce } from '../hooks';
 import { RoomLobbyView } from '../types';
 import { useGame } from '../hooks/useGame';
@@ -19,18 +15,19 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
 
   useDebounce(
     () => {
-      if (!term) return;
+      const termSanitized = term.trim();
+      if (!termSanitized) return;
 
       channel
-        ?.push('search', { term })
-        .receive('ok', (room) => console.log(room))
-        .receive('error', (msg) => {
-          if (msg === 'not_found') {
+        ?.push('search', { term: termSanitized })
+        .receive('ok', (room) => setRoom(room))
+        .receive('error', (error) => {
+          if (error.reason === 'not found') {
             setRoom(null);
           }
         });
     },
-    700,
+    500,
     [term]
   );
 
@@ -41,7 +38,7 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
     <button
       key="create"
       className="btn grow-0 text-blue-500 border-blue-500 hover:bg-blue-500 hover:text-white"
-      onClick={() => createGame(term)}
+      onClick={() => createGame(term.trim())}
     >
       Create
     </button>
@@ -50,7 +47,7 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
     <button
       key="join"
       className="btn grow-0 text-green-600 border-green-600 hover:bg-green-600 hover:text-white"
-      onClick={() => joinGame(term)}
+      onClick={() => joinGame(term.trim())}
     >
       Join
     </button>
@@ -59,12 +56,12 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
     <button
       key="observe"
       className="btn grow-0 text-cyan-500 border-cyan-500 hover:bg-cyan-500 hover:text-white"
-      onClick={() => observeGame(term)}
+      onClick={() => observeGame(term.trim())}
     >
       Observe
     </button>
   );
-  if (term) {
+  if (term.trim()) {
     if (!room) {
       buttons.push(btnCreate);
     } else {
@@ -76,11 +73,12 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
   }
 
   const onKeyDown = (ev: KeyboardEvent) => {
-    if (!term) return;
+    const termSanitized = term.trim();
+    if (!termSanitized) return;
     if (ev.key !== 'Enter') return;
-    if (!room) createGame(term);
-    else if (room.status === 'open') joinGame(term);
-    else observeGame(term);
+    if (!room) createGame(termSanitized);
+    else if (room.status === 'open') joinGame(termSanitized);
+    else observeGame(termSanitized);
   };
 
   return (
@@ -91,7 +89,7 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
         placeholder="Search or Create A Room"
         aria-label="Search or Create A Room"
         value={term}
-        onChange={(e) => setTerm(e.currentTarget.value.trim())}
+        onChange={(e) => setTerm(e.currentTarget.value)}
         onKeyDown={onKeyDown}
       />
       {buttons}

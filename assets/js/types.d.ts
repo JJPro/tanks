@@ -1,7 +1,7 @@
 export interface Room {
   name: string;
   players: Player[];
-  game?: string; // TODO might be wrong 
+  status: string;
 }
 
 export interface Player {

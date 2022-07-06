@@ -10,7 +10,6 @@ defmodule Tanks.Gaming.Room do
   alias Tanks.Gaming.{Game, GameServer}
   alias Tanks.Accounts.User
 
-  @derive Jason.Encoder
   defstruct name: "", players: [], game: nil
 
   @type t :: %Room{
@@ -20,9 +19,9 @@ defmodule Tanks.Gaming.Room do
           game: pid() | nil
         }
   @type lobby_view :: %{
-    name: String.t(),
-    status: atom()
-  }
+          name: String.t(),
+          status: atom()
+        }
 
   @sprites {
     "/images/tank-cyan.png",
@@ -110,7 +109,7 @@ defmodule Tanks.Gaming.Room do
   def start_game(room = %Room{}) do
     cond do
       length(room.players) < 2 ->
-        {:error, %{reason: "not enough players"}}
+        {:error, %{reason: "not enough players, needs at least 2 players to start"}}
 
       Enum.any?(room.players, &(!&1.ready?)) ->
         {:error, %{reason: "players are not ready"}}
@@ -153,5 +152,18 @@ defmodule Tanks.Gaming.Room do
   @spec find_player_of_user(t(), %User{}) :: Player.t() | nil
   defp find_player_of_user(room, user) do
     Enum.find(room.players, &(&1.user == user))
+  end
+end
+
+defimpl Jason.Encoder, for: Tanks.Gaming.Room do
+  def encode(%Tanks.Gaming.Room{} = room, opts) do
+    room =
+      room
+      |> Map.take([:name, :players])
+      |> Map.merge(%{
+        status: Tanks.Gaming.Room.get_status(room)
+      })
+
+    Jason.Encode.map(room, opts)
   end
 end

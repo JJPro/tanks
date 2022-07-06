@@ -37,7 +37,7 @@ function Lobby() {
         <h2 className="font-semibold text-xl text-gray-600 text-center">
           Join Others
         </h2>
-        <div className="flex flex-wrap items-center justify-center">
+        <div className="flex flex-wrap items-stretch justify-center">
           {rooms.map((room) => (
             <RoomCard key={room.name} room={room} channel={channel} />
           ))}
