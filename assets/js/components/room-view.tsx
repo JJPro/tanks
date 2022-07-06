@@ -49,6 +49,7 @@ function RoomView(props: IRoomView) {
   channel?.on('kickedout', ({ room, player_uid }) => {
     setRoom(room);
     if (userId === player_uid) {
+      navigate('/');
       badToast(<p>You were kicked out by host.</p>);
     }
   });
