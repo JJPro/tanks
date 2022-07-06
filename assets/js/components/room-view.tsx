@@ -18,7 +18,7 @@ function RoomView(props: IRoomView) {
   const navigate = useNavigate();
   const params = useParams();
 
-  const { channel } = useChannel(
+  const channel = useChannel(
     'room:' + params.room_name,
     ({ room, host_id, user_id }) => {
       setRoom(room);
@@ -27,6 +27,12 @@ function RoomView(props: IRoomView) {
       
       if (room.status == 'in_game') {
         props.onGameStart();
+      }
+    },
+    ({reason}) => {
+      if (reason == 'not found') {
+        badToast(<p>Room doesn't exist!</p>);
+        navigate('/');
       }
     }
   );

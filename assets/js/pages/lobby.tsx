@@ -6,7 +6,7 @@ import { RoomLobbyView } from '../types';
 
 function Lobby() {
   const [rooms, setRooms] = useState<RoomLobbyView[]>([]);
-  const { channel } = useChannel('lobby', ({rooms}) => setRooms(rooms));
+  const channel = useChannel('lobby', ({rooms}) => setRooms(rooms));
 
   channel?.on('new_room', ({ room }) => {
     setRooms([room, ...rooms]);
