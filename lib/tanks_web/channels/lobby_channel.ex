@@ -72,7 +72,8 @@ defmodule TanksWeb.LobbyChannel do
         {:reply, {:error, %{reason: "room exists"}}, socket}
 
       nil ->
-        room = Room.new(room_name, socket.assigns.user_id)
+        user = Tanks.Accounts.get_user!(socket.assigns.user_id)
+        room = Room.new(room_name, user)
         RoomStore.put(room_name, room)
         broadcast!(socket, "new_room", %{room: Room.lobby_view(room)})
         {:reply, {:ok, nil}, socket}
