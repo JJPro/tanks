@@ -12,6 +12,9 @@ module.exports = {
       padding: '2rem',
     },
     extend: {
+      fontFamily: {
+        'press-start': ['"Press Start 2P"', 'cursive']
+      },
       animation: {
         wiggle: 'wiggle 1s ease-in-out infinite',
         jello: 'jello 1s linear',
@@ -21,7 +24,7 @@ module.exports = {
         flip: 'flip 1s linear infinite',
         hinge: 'hinge 2s linear',
         pulse2: 'pulse2 1s ease-in-out infinite',
-        flash: 'flash 1s linear infinite',
+        flash: 'flash 1.5s linear infinite',
       },
       keyframes: {
         wiggle: {

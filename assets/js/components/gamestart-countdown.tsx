@@ -18,7 +18,7 @@ function GamestartCountdown(props: IGamestartCountdown) {
       className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center"
       onKeyDown={blockKeyPress}
     >
-      <div className="animate-rubberBand w-36 h-36 rounded-full text-violet-500 text-8xl flex items-center justify-center p-2">
+      <div className="animate-bounce2 text-violet-500 text-8xl flex items-center justify-center p-2">
         {countdown}
       </div>
     </div>
