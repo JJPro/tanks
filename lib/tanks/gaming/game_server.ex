@@ -31,8 +31,8 @@ defmodule Tanks.Gaming.GameServer do
 
   @type state :: {room_name :: String.t(), game :: Game.t() | nil}
 
-  @spec start_link(Game.t(), String.t()) :: {:ok, GenServer.server()}
-  def start_link(game, room_name) do
+  @spec start_link({Game.t(), String.t()}) :: {:ok, GenServer.server()}
+  def start_link({game, room_name}) do
     {:ok, pid} = GenServer.start_link(__MODULE__, {room_name, game})
     Process.send(pid, :loop, [])
 

@@ -118,7 +118,7 @@ defmodule Tanks.Gaming.Room do
         {:ok, pid} =
           DynamicSupervisor.start_child(
             Tanks.GameServerSupervisor,
-            {GameServer, [Game.new(room.players), room.name]}
+            {GameServer, {Game.new(room.players), room.name}}
           )
 
         {:ok, %{room | game: pid}}
