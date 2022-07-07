@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import socket from "../user_socket";
 
 export type Callback = ((data: any) => void) | null;
-export function useChannel(topic: string, successCallback: Callback, errorCallback: Callback) {
+export function useChannel(topic: string, successCallback?: Callback, errorCallback?: Callback) {
   const [channel, setChannel] = useState<Channel>();
 
   useEffect(() => {

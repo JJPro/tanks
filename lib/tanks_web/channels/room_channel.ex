@@ -118,7 +118,7 @@ defmodule TanksWeb.RoomChannel do
 
         {:empty_room, nil} ->
           RoomStore.delete(room.name)
-          broadcast(socket, "close_room", nil)
+          broadcast(socket, "close_room", %{})
           TanksWeb.Endpoint.broadcast!("lobby", "close_room", %{room: Room.lobby_view(room)})
 
           # Return {:error, _} so that the room is not committed back to store
