@@ -98,23 +98,27 @@ defmodule Tanks.Gaming.GameServer do
     # Step the game iff current state has missiles in map (to reserve messaging frequency)
     #   Broadcast new state to players
     # Check if gameover and broadcast "gameover" event if is
-    with true <- length(game.missiles) > 0,
-         game = Game.step(game),
-         :ok <- broadcast!(:game, room_name, "game_tick", %{game: game}),
-         true <- Game.gameover?(game) do
-      broadcast!(:game, room_name, "gameover", %{game: game})
+    if length(game.missiles) > 0 do
+      game = Game.step(game)
+      broadcast!(:game, room_name, "game_tick", %{game: game})
 
-      # terminate game, update room, and broadcast new room status to room channels and the lobby
-      room = RoomStore.get(room_name)
-      {:ok, room} = Room.end_game(room)
-      :ok = RoomStore.put(room_name, room)
-      broadcast!(:room, room_name, "room_change", %{room: room})
-      broadcast!(:lobby, "room_change", %{room: Room.lobby_view(room)})
+      if Game.gameover?(game) do
+        broadcast!(:game, room_name, "gameover", %{game: game})
 
-      # signal GenServer process to terminate
-      {:stop, :normal, {room_name, nil}}
+        # terminate game, update room, and broadcast new room status to room channels and the lobby
+        room = RoomStore.get(room_name)
+        {:ok, room} = Room.end_game(room)
+        :ok = RoomStore.put(room_name, room)
+        broadcast!(:room, room_name, "room_change", %{room: room})
+        broadcast!(:lobby, "room_change", %{room: Room.lobby_view(room)})
+
+        # signal GenServer process to terminate
+        {:stop, :normal, {room_name, nil}}
+      else
+        {:noreply, {room_name, game}}
+      end
     else
-      _ -> {:noreply, state}
+      {:noreply, state}
     end
   end
 
@@ -137,13 +141,17 @@ defmodule Tanks.Gaming.GameServer do
 
   @impl true
   def handle_cast({:fire, player_uid}, {room_name, game}) do
-    {:noreply, {room_name, Game.fire(game, player_uid)}}
+    game = Game.fire(game, player_uid)
+    broadcast!(:game, room_name, "game_tick", %{game: game})
+    {:noreply, {room_name, game}}
   end
 
   @impl true
   def handle_cast({:move, player_uid, direction}, {room_name, game})
       when direction in [:up, :down, :left, :right] do
-    {:noreply, {room_name, Game.move(game, player_uid, direction)}}
+    game = Game.move(game, player_uid, direction)
+    broadcast!(:game, room_name, "game_tick", %{game: game})
+    {:noreply, {room_name, game}}
   end
 
   @impl true

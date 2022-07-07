@@ -1,19 +1,22 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useChannel } from '../hooks';
-import { Game, Player } from '../types';
+import { Direction, Game, Player } from '../types';
 import { badToast } from '../utils';
 import GameWorld from './game-world';
 import GameoverCountdown from './gameover-countdown';
 import HP from './artifacts/hp';
+import { throttle } from 'lodash';
 
 interface IGameView {
   onGameEnd: () => void;
 }
+type Role = 'observer' | 'player';
 
 function GameView(props: IGameView) {
   const [game, setGame] = useState<Game>();
   const [userId, setUserId] = useState();
+  const [role, setRole] = useState<Role>('observer');
   const [players, setPlayers] = useState<Player[]>();
   const [gameoverInfo, setGameoverInfo] = useState({
     isGameover: false,
@@ -22,9 +25,10 @@ function GameView(props: IGameView) {
   const params = useParams();
   const channel = useChannel(
     'game:' + params.room_name,
-    ({ game, user_id, players }) => {
+    ({ game, user_id, role, players }) => {
       setGame(game);
       setUserId(user_id);
+      setRole(role);
       setPlayers(players);
     },
     ({ reason }) => {
@@ -36,7 +40,9 @@ function GameView(props: IGameView) {
     }
   );
 
-  channel?.on('game_tick', ({ game }) => setGame(game));
+  channel?.on('game_tick', ({ game }) => {
+    setGame(game);
+  });
   channel?.on('gameover', ({ game, 'win?': didWin }) => {
     setGame(game);
     setGameoverInfo({ isGameover: true, didWin });
@@ -45,8 +51,57 @@ function GameView(props: IGameView) {
     badToast(<p>Oops! The Game Process Crashed</p>);
   });
 
+  const throttledFire = useCallback(
+    throttle(() => channel?.push('fire', {}), 700),
+    [channel]
+  );
+
+  useEffect(() => {
+    document.addEventListener('keydown', (e) => {
+      if (role !== 'player') return;
+      let direction: Direction | null = null,
+        fire: boolean = false;
+      switch (e.key) {
+        case 'w':
+        case 'ArrowUp':
+          direction = 'up';
+          break;
+        case 's':
+        case 'ArrowDown':
+          direction = 'down';
+          break;
+        case 'a':
+        case 'ArrowLeft':
+          direction = 'left';
+          break;
+        case 'd':
+        case 'ArrowRight':
+          direction = 'right';
+          break;
+        case ' ':
+        case 'Shift':
+          fire = true;
+          break;
+        default:
+          break;
+      }
+
+      if (direction) {
+        e.preventDefault();
+        channel?.push('move', { direction });
+      }
+      if (fire) {
+        e.preventDefault();
+        throttledFire();
+      }
+    });
+  }, [role, channel]);
+
   return (
-    <div className="container mx-auto px-2 flex justify-center gap-x-4">
+    <div
+      className="container mx-auto px-2 flex justify-center gap-x-4 focus:outline-none"
+      tabIndex={0}
+    >
       {/* game world */}
       <div className="relative bg-black">
         {game && <GameWorld game={game} />}

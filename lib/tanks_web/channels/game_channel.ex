@@ -46,10 +46,17 @@ defmodule TanksWeb.GameChannel do
     with room = %Room{} <- RoomStore.get(room_name),
          game_pid when is_pid(game_pid) <- room.game,
          true <- Process.alive?(game_pid) do
+      role =
+        cond do
+          Enum.any?(room.players, fn p -> p.user.id === socket.assigns.user_id end) -> :player
+          true -> :observer
+        end
+
       {:ok,
        %{
          game: GameServer.get_state(game_pid),
          user_id: socket.assigns.user_id,
+         role: role,
          players: room.players
        }, assign(socket, :game, game_pid)}
     else

@@ -4,6 +4,7 @@ defmodule Tanks.Gaming.Game do
   """
 
   alias Tanks.Gaming.Artifacts.{Missile, Tank, Steel, Brick, Player}
+  alias Tanks.Gaming.SquareDimension
 
   @moves %{
     up: {0, -1},
@@ -58,14 +59,21 @@ defmodule Tanks.Gaming.Game do
     tanks =
       game.tanks
       |> Enum.map(fn t ->
-        if t.player.user.id == player_uid and legal_move?(game, t, direction) do
-          {dx, dy} = @moves[direction]
+        if t.player.user.id == player_uid do
+          changeset =
+            if legal_move?(game, t, direction) do
+              {dx, dy} = @moves[direction]
 
-          changeset = %{
-            orientation: direction,
-            x: t.x + dx,
-            y: t.y + dy
-          }
+              %{
+                orientation: direction,
+                x: t.x + dx,
+                y: t.y + dy
+              }
+            else
+              %{
+                orientation: direction
+              }
+            end
 
           struct!(t, changeset)
         else
@@ -128,12 +136,12 @@ defmodule Tanks.Gaming.Game do
     {dx, dy} = @moves[direction]
     tankp = %{tank | x: tank.x + dx, y: tank.y + dy}
 
-    # verify within bounds
-    within_bounds?(tankp, game)
-    # verify no collision with bricks, steels, and other tanks
-    |> Kernel.and(not Enum.any?(game.bricks, &collide?(&1, tank)))
-    |> Kernel.and(not Enum.any?(game.steels, &collide?(&1, tank)))
-    |> Kernel.and(not Enum.any?(List.delete(game.tanks, tank), &collide?(&1, tank)))
+    with true <- within_bounds?(tankp, game),
+         true <- not Enum.any?(game.bricks, &collide?(&1, tankp)),
+         true <- not Enum.any?(game.steels, &collide?(&1, tankp)),
+         true <- not Enum.any?(List.delete(game.tanks, tank), &collide?(&1, tankp)) do
+      true
+    end
   end
 
   # Updates location of missiles in the game
@@ -257,9 +265,10 @@ defmodule Tanks.Gaming.Game do
   end
 
   # Tells if an object collides into another
-  @spec collide?(object(), object()) :: boolean()
+  @spec collide?(SquareDimension.t(), SquareDimension.t()) :: boolean()
   defp collide?(o1, o2) do
-    abs(o1.x + o1.width / 2 - (o2.x + o2.width / 2)) < o1.width / 2 + o2.width / 2 and
-      abs(o1.y + o1.height / 2 - (o2.y + o2.height / 2)) < o1.height / 2 + o2.height / 2
+    {x1, y1, r1} = SquareDimension.dimension(o1)
+    {x2, y2, r2} = SquareDimension.dimension(o2)
+    (:math.pow(x1 - x2, 2) + :math.pow(y1 - y2, 2)) < :math.pow(r1 + r2, 2)
   end
 end

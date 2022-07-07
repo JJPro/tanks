@@ -2,7 +2,7 @@ import { Channel } from 'phoenix';
 import React, { KeyboardEvent, ReactElement, useState } from 'react';
 import { useDebounce } from '../hooks';
 import { RoomLobbyView } from '../types';
-import { useGame } from '../hooks/useGame';
+import { useRoom } from '../hooks';
 
 interface ICreateRoomInputProps {
   channel?: Channel;
@@ -31,14 +31,14 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
     [term]
   );
 
-  const { createGame, joinGame, observeGame } = useGame(channel);
+  const { createRoom, joinRoom, observeRoom } = useRoom(channel);
 
   let buttons: ReactElement[] = [];
   const btnCreate = (
     <button
       key="create"
       className="btn grow-0 text-blue-500 border-blue-500 hover:bg-blue-500 hover:text-white"
-      onClick={() => createGame(term.trim())}
+      onClick={() => createRoom(term.trim())}
     >
       Create
     </button>
@@ -47,7 +47,7 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
     <button
       key="join"
       className="btn grow-0 text-green-600 border-green-600 hover:bg-green-600 hover:text-white"
-      onClick={() => joinGame(term.trim())}
+      onClick={() => joinRoom(term.trim())}
     >
       Join
     </button>
@@ -56,7 +56,7 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
     <button
       key="observe"
       className="btn grow-0 text-cyan-500 border-cyan-500 hover:bg-cyan-500 hover:text-white"
-      onClick={() => observeGame(term.trim())}
+      onClick={() => observeRoom(term.trim())}
     >
       Observe
     </button>
@@ -76,9 +76,9 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
     const termSanitized = term.trim();
     if (!termSanitized) return;
     if (ev.key !== 'Enter') return;
-    if (!room) createGame(termSanitized);
-    else if (room.status === 'open') joinGame(termSanitized);
-    else observeGame(termSanitized);
+    if (!room) createRoom(termSanitized);
+    else if (room.status === 'open') joinRoom(termSanitized);
+    else observeRoom(termSanitized);
   };
 
   return (

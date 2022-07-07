@@ -3,7 +3,7 @@ defmodule Tanks.Gaming.Artifacts.Brick do
   @width 1
   @height 1
 
-  @derive Jason.Encoder
+  @derive [Jason.Encoder, Tanks.Gaming.SquareDimension]
   defstruct x: 0, y: 0, width: @width, height: @height
 
   @type t :: %Brick{

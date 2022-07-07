@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useChannel, useGame } from '../hooks';
+import { useChannel, useRoom } from '../hooks';
 import { Player, Room } from '../types';
 import { badToast } from '../utils';
 import GamestartCountdown from './gamestart-countdown';
@@ -40,7 +40,7 @@ function RoomView(props: IRoomView) {
       }
     }
   );
-  const { joinGame, leaveGame, toggleReady, startGame } = useGame(channel);
+  const { joinRoom, leaveRoom, toggleReady, startGame } = useRoom(channel);
 
   channel?.on('gamestart', () => {
     setShowCountdown(true);
@@ -118,7 +118,7 @@ function RoomView(props: IRoomView) {
       <button
         key="join"
         className="btn btn-solid px-5 py-2 bg-green-500 hover:bg-green-600"
-        onClick={() => joinGame(room?.name)}
+        onClick={() => joinRoom(room?.name)}
       >
         Join
       </button>
@@ -130,7 +130,7 @@ function RoomView(props: IRoomView) {
     <button
       key="leave"
       className="btn btn-outline px-5 py-2 text-amber-400 border-amber-400 hover:bg-amber-400"
-      onClick={leaveGame}
+      onClick={leaveRoom}
     >
       Leave
     </button>

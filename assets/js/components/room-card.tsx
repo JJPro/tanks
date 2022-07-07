@@ -1,7 +1,7 @@
 import React from 'react';
 import { Channel } from 'phoenix';
 import { RoomLobbyView, RoomStatus } from '../types';
-import { useGame } from '../hooks';
+import { useRoom } from '../hooks';
 
 interface IRoomCard {
   room: RoomLobbyView;
@@ -39,13 +39,13 @@ function RoomCard(props: IRoomCard) {
       break;
   }
 
-  const { joinGame, observeGame } = useGame(channel);
+  const { joinRoom, observeRoom } = useRoom(channel);
 
   const JoinButton = () => {
     return (
       <button
         className="btn btn-solid bg-green-600 hover:bg-green-700 px-0 w-32"
-        onClick={() => joinGame(name)}
+        onClick={() => joinRoom(name)}
       >
         Join
       </button>
@@ -54,7 +54,7 @@ function RoomCard(props: IRoomCard) {
 
   const ObserveButton = () => {
     return (
-      <button className="btn btn-solid bg-cyan-500 hover:bg-cyan-700 px-0 w-32" onClick={() => observeGame(name)}>
+      <button className="btn btn-solid bg-cyan-500 hover:bg-cyan-700 px-0 w-32" onClick={() => observeRoom(name)}>
         Observe
       </button>
     );

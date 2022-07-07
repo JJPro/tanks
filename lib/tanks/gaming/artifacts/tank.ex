@@ -5,7 +5,7 @@ defmodule Tanks.Gaming.Artifacts.Tank do
   @height 2
 
   @enforce_keys [:orientation, :player]
-  @derive Jason.Encoder
+  @derive [Jason.Encoder, Tanks.Gaming.SquareDimension]
   defstruct x: 0,
             y: 0,
             width: @width,
