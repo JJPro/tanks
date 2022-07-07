@@ -10,26 +10,30 @@ interface IRoomView {
   onGameStart: () => void;
 }
 
+type Role = 'observer' | 'host' | 'player';
+
 function RoomView(props: IRoomView) {
   const [room, setRoom] = useState<Room>();
   const [userId, setUserId] = useState();
   const [hostId, setHostId] = useState();
+  const [role, setRole] = useState<Role>('observer');
   const [showCountdown, setShowCountdown] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
 
   const channel = useChannel(
     'room:' + params.room_name,
-    ({ room, host_id, user_id }) => {
+    ({ room, host_id, user_id, role }) => {
       setRoom(room);
       setHostId(host_id);
       setUserId(user_id);
-      
+      setRole(role);
+
       if (room.status == 'in_game') {
         props.onGameStart();
       }
     },
-    ({reason}) => {
+    ({ reason }) => {
       if (reason == 'not found') {
         badToast(<p>Room doesn't exist!</p>);
         navigate('/');
@@ -46,9 +50,9 @@ function RoomView(props: IRoomView) {
     setRoom(room);
   });
 
-  channel?.on('kickedout', ({ room, player_uid }) => {
+  channel?.on('kickedout', ({ room, 'me?': isMe }) => {
     setRoom(room);
-    if (userId === player_uid) {
+    if (isMe) {
       navigate('/');
       badToast(<p>You were kicked out by host.</p>);
     }
@@ -77,12 +81,9 @@ function RoomView(props: IRoomView) {
 
   const currentPlayer = room?.players.find((p) => p.user.id === userId);
   const controls: ReactElement[] = [];
-  if (currentPlayer) {
-    /**
-     * Controls for players
-     */
+  if (role === 'host' || role === 'player') {
     let readyTailwinds = '';
-    if (currentPlayer['ready?']) {
+    if (currentPlayer?.['ready?']) {
       readyTailwinds = 'text-red-600 border-red-600 hover:bg-red-600';
     } else {
       readyTailwinds = 'text-green-600 border-green-600 hover:bg-green-600';
@@ -93,27 +94,26 @@ function RoomView(props: IRoomView) {
         className={`btn btn-outline px-5 py-2 ${readyTailwinds}`}
         onClick={toggleReady}
       >
-        {currentPlayer['ready?'] ? 'Cancel' : 'Ready'}
+        {currentPlayer?.['ready?'] ? 'Cancel' : 'Ready'}
       </button>
     );
     controls.push(readyButton);
+  }
 
-    if (userId === hostId) {
-      const startButton = (
-        <button
-          key="start"
-          className="btn btn-solid px-5 py-2 bg-cyan-500 hover:bg-cyan-600"
-          onClick={startGame}
-        >
-          Start
-        </button>
-      );
-      controls.push(startButton);
-    }
-  } else {
-    /**
-     * Controls for observers
-     */
+  if (role === 'host') {
+    const startButton = (
+      <button
+        key="start"
+        className="btn btn-solid px-5 py-2 bg-cyan-500 hover:bg-cyan-600"
+        onClick={startGame}
+      >
+        Start
+      </button>
+    );
+    controls.push(startButton);
+  }
+
+  if (role === 'observer') {
     const joinButton = (
       <button
         key="join"

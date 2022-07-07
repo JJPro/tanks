@@ -97,7 +97,7 @@ defmodule Tanks.Gaming.GameServer do
          game = Game.step(game),
          :ok <- broadcast!(:game, room_name, "game_tick", %{game: game}),
          true <- Game.gameover?(game) do
-      broadcast!(:game, room_name, "gameover", %{})
+      broadcast!(:game, room_name, "gameover", %{game: game})
 
       # terminate game, update room, and broadcast new room status to room channels and the lobby
       room = RoomStore.get(room_name)

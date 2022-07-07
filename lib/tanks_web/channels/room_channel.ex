@@ -57,6 +57,8 @@ defmodule TanksWeb.RoomChannel do
   alias Tanks.Accounts
   alias Tanks.Accounts.User
 
+  intercept ["kickedout"]
+
   ## User (Player and Observer) Actions
 
   @doc """
@@ -68,7 +70,16 @@ defmodule TanksWeb.RoomChannel do
     case RoomStore.get(room_name) do
       %Room{} = room ->
         %Tanks.Gaming.Artifacts.Player{} = host = Room.host(room)
-        {:ok, %{room: room, user_id: socket.assigns.user_id, host_id: host.user.id}, socket}
+
+        role =
+          cond do
+            host.user.id === socket.assigns.user_id -> :host
+            Enum.any?(room.players, fn p -> p.user.id === socket.assigns.user_id end) -> :player
+            true -> :observer
+          end
+
+        {:ok, %{room: room, role: role, user_id: socket.assigns.user_id, host_id: host.user.id},
+         socket}
 
       nil ->
         {:error, %{reason: "not found"}}
@@ -176,6 +187,13 @@ defmodule TanksWeb.RoomChannel do
       {:ok, _} -> {:noreply, socket}
       error -> {:reply, error, socket}
     end
+  end
+
+  @impl true
+  def handle_out("kickedout", %{room: room, player_uid: player_uid}, socket) do
+    me? = player_uid === socket.assigns.user_id
+    push(socket, "kickedout", %{room: room, me?: me?})
+    {:noreply, socket}
   end
 
   # Looks up a room and updates it with a callback.

@@ -20,6 +20,8 @@ module.exports = {
         rubberBand: 'rubberBand 1s linear infinite',
         flip: 'flip 1s linear infinite',
         hinge: 'hinge 2s linear',
+        pulse2: 'pulse2 1s ease-in-out infinite',
+        flash: 'flash 1s linear infinite',
       },
       keyframes: {
         wiggle: {
@@ -131,6 +133,22 @@ module.exports = {
           },
           to: {
             transform: 'translate3d(0, 700px, 0)',
+            opacity: 0,
+          },
+        },
+        pulse2: {
+          '0%, 100%': {
+            transform: 'scale3d(1, 1, 1)',
+          },
+          '50%': {
+            transform: 'scale3d(1.05, 1.05, 1.05)',
+          },
+        },
+        flash: {
+          '0%,50%,100%': {
+            opacity: 1,
+          },
+          '25%,75%': {
             opacity: 0,
           },
         },

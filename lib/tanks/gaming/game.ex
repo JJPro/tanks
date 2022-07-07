@@ -115,6 +115,15 @@ defmodule Tanks.Gaming.Game do
     length(game.tanks) <= 1
   end
 
+  @spec winner(t()) :: Player.t() | nil
+  def winner(game) do
+    if gameover?(game) do
+      hd(game.tanks).player
+    else
+      nil
+    end
+  end
+
   defp legal_move?(game, tank, direction) do
     {dx, dy} = @moves[direction]
     tankp = %{tank | x: tank.x + dx, y: tank.y + dy}

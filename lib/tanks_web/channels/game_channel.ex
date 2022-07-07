@@ -32,12 +32,14 @@ defmodule TanksWeb.GameChannel do
   | event     | payload       |
   | --------- | ------------- |
   | game_tick | %{game: game} |
-  | gameover  | -             |
+  | gameover  | %{game: game} |
 
   """
   use TanksWeb, :channel
-  alias Tanks.Gaming.GameServer
+  alias Tanks.Gaming.{GameServer, Game}
   alias Tanks.Store.RoomStore
+
+  intercept ["gameover"]
 
   @impl true
   def join("game:" <> room_name, _payload, socket) do
@@ -52,21 +54,33 @@ defmodule TanksWeb.GameChannel do
 
   @impl true
   def handle_in("fire", _payload, socket) do
-    :ok = GameServer.fire(
-      socket.assigns.game,
-      socket.assigns.user_id
-    )
+    :ok =
+      GameServer.fire(
+        socket.assigns.game,
+        socket.assigns.user_id
+      )
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_in("move", %{"direction" => direction}, socket) do
-    :ok = GameServer.move(
-      socket.assigns.game,
-      socket.assigns.user_id,
-      String.to_atom(direction)
-    )
+    :ok =
+      GameServer.move(
+        socket.assigns.game,
+        socket.assigns.user_id,
+        String.to_atom(direction)
+      )
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_out("gameover", %{game: game}, socket) do
+    if winner = Game.winner(game) do
+      win? = winner.user.id === socket.assigns.user_id
+      push(socket, "gameover", %{game: game, win?: win?})
+    end
 
     {:noreply, socket}
   end
