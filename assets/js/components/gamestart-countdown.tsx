@@ -1,19 +1,12 @@
-import React, { KeyboardEvent, useEffect, useState } from 'react';
+import React, { KeyboardEvent } from 'react';
+import { useCountdown } from '../hooks';
 
-interface ICountdown {
+interface IGamestartCountdown {
   onCountdownEnd: CallableFunction;
 }
 
-function Countdown(props: ICountdown) {
-  const [countdown, setCountdown] = useState(5);
-
-  useEffect(() => {
-    if (countdown > 0) {
-      setTimeout(() => setCountdown(countdown -1), 1000)
-    } else {
-      props.onCountdownEnd();
-    }
-  }, [countdown])
+function GamestartCountdown(props: IGamestartCountdown) {
+  const countdown = useCountdown(5, props.onCountdownEnd);
 
   const blockKeyPress = (e: KeyboardEvent) => {
     e.preventDefault();
@@ -32,4 +25,4 @@ function Countdown(props: ICountdown) {
   );
 }
 
-export default Countdown;
+export default GamestartCountdown;

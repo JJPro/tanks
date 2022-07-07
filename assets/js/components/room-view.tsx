@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useChannel, useGame } from '../hooks';
 import { Player, Room } from '../types';
 import { badToast } from '../utils';
-import Countdown from './countdown';
+import GamestartCountdown from './gamestart-countdown';
 import PlayerCard from './player-card';
 
 interface IRoomView {
@@ -139,7 +139,7 @@ function RoomView(props: IRoomView) {
 
   return (
     <>
-      {showCountdown && <Countdown onCountdownEnd={onCountdownEnd} />}
+      {showCountdown && <GamestartCountdown onCountdownEnd={onCountdownEnd} />}
       <div className="flex flex-wrap items-stretch justify-center gap-4">
         {room?.players.map((player) => (
           <PlayerCard
