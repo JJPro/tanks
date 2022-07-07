@@ -18,7 +18,8 @@ defmodule Tanks.Application do
       TanksWeb.Endpoint,
       # Start a worker by calling: Tanks.Worker.start_link(arg)
       # {Tanks.Worker, arg}
-      Tanks.Store.RoomStore
+      Tanks.Store.RoomStore,
+      {DynamicSupervisor, strategy: :one_for_one, name: Tanks.GameServerSupervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

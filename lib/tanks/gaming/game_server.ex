@@ -18,8 +18,10 @@ defmodule Tanks.Gaming.GameServer do
   | the loop  | game_tick   | game:room_name        | %{game: game}                           |
   | gameover  | gameover    | game:room_name        | -                                       |
   | gameover  | room_change | lobby, room:room_name | %{room: Room.lobby_view}, %{room: room} |
+  | crash     | gamecrash   | game:room_name        | -                                       |
+  | crash     | room_change | lobby, room:room_name | %{room: Room.lobby_view}, %{room: room} |
   """
-  use GenServer
+  use GenServer, restart: :temporary
 
   alias Tanks.Gaming.{Game, Room}
   alias Tanks.Store.RoomStore
@@ -58,6 +60,24 @@ defmodule Tanks.Gaming.GameServer do
   end
 
   @doc """
+  Handles game crash.
+
+  When game crash:
+  1. broadcast to game players
+  2. update roomstore
+  3. broadcast room_change event to room and lobby
+  """
+  @impl true
+  def terminate(reason, {room_name, _game}) when reason !== :normal do
+    room = RoomStore.get(room_name)
+    {:ok, room} = Room.end_game(room)
+    :ok = RoomStore.put(room_name, room)
+    broadcast!(:game, room_name, "gamecrash", %{})
+    broadcast!(:room, room_name, "room_change", %{room: room})
+    broadcast!(:lobby, "room_change", %{room: Room.lobby_view(room)})
+  end
+
+  @doc """
   Game Loop
 
   @return:
@@ -77,7 +97,6 @@ defmodule Tanks.Gaming.GameServer do
          game = Game.step(game),
          :ok <- broadcast!(:game, room_name, "game_tick", %{game: game}),
          true <- Game.gameover?(game) do
-      # broadcast "gameover" event to game channels
       broadcast!(:game, room_name, "gameover", %{})
 
       # terminate game, update room, and broadcast new room status to room channels and the lobby

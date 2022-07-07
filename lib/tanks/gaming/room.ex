@@ -115,7 +115,12 @@ defmodule Tanks.Gaming.Room do
         {:error, %{reason: "players are not ready"}}
 
       true ->
-        {:ok, pid} = GameServer.start_link(Game.new(room.players), room.name)
+        {:ok, pid} =
+          DynamicSupervisor.start_child(
+            Tanks.GameServerSupervisor,
+            {GameServer, [Game.new(room.players), room.name]}
+          )
+
         {:ok, %{room | game: pid}}
     end
   end
