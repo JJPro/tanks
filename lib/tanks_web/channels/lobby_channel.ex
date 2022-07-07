@@ -76,7 +76,7 @@ defmodule TanksWeb.LobbyChannel do
         room = Room.new(room_name, user)
         RoomStore.put(room_name, room)
         broadcast!(socket, "new_room", %{room: Room.lobby_view(room)})
-        {:reply, {:ok, nil}, socket}
+        {:reply, :ok, socket}
     end
   end
 
@@ -88,13 +88,17 @@ defmodule TanksWeb.LobbyChannel do
           {:ok, room} ->
             :ok = RoomStore.put(room_name, room)
             TanksWeb.Endpoint.broadcast("room:" <> room_name, "room_change", %{room: room})
+
             if Room.get_status(room) == :full do
               broadcast!(socket, "room_change", %{room: Room.lobby_view(room)})
             end
-            {:reply, {:ok, nil}, socket}
+
+            {:reply, :ok, socket}
+
           {:error, reason} ->
             {:reply, {:error, %{reason: reason}}, socket}
         end
+
       nil ->
         {:reply, {:error, %{reason: "not found"}}, socket}
     end

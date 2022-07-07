@@ -36,17 +36,22 @@ defmodule TanksWeb.GameChannel do
 
   """
   use TanksWeb, :channel
-  alias Tanks.Gaming.{GameServer, Game}
+  alias Tanks.Gaming.{GameServer, Game, Room}
   alias Tanks.Store.RoomStore
 
   intercept ["gameover"]
 
   @impl true
   def join("game:" <> room_name, _payload, socket) do
-    with room = RoomStore.get(room_name),
-         game when is_pid(game) <- room.game,
-         true <- Process.alive?(game) do
-      {:ok, assign(socket, :game, game)}
+    with room = %Room{} <- RoomStore.get(room_name),
+         game_pid when is_pid(game_pid) <- room.game,
+         true <- Process.alive?(game_pid) do
+      {:ok,
+       %{
+         game: GameServer.get_state(game_pid),
+         user_id: socket.assigns.user_id,
+         players: room.players
+       }, assign(socket, :game, game_pid)}
     else
       _ -> {:error, %{reason: "terminated"}}
     end

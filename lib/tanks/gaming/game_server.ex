@@ -53,6 +53,11 @@ defmodule Tanks.Gaming.GameServer do
     GenServer.cast(server, {:move, player_uid, direction})
   end
 
+  @spec get_state(GenServer.server()) :: Game.t()
+  def get_state(server) do
+    GenServer.call(server, :get_state)
+  end
+
   @impl true
   @spec init(state()) :: {:ok, state()}
   def init(state) do
@@ -139,5 +144,10 @@ defmodule Tanks.Gaming.GameServer do
   def handle_cast({:move, player_uid, direction}, {room_name, game})
       when direction in [:up, :down, :left, :right] do
     {:noreply, {room_name, Game.move(game, player_uid, direction)}}
+  end
+
+  @impl true
+  def handle_call(:get_state, _from, {_room_name, game} = state) do
+    {:reply, game, state}
   end
 end
