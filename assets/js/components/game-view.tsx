@@ -17,7 +17,6 @@ function GameView(props: IGameView) {
   const [game, setGame] = useState<Game>();
   const [userId, setUserId] = useState();
   const [role, setRole] = useState<Role>('observer');
-  const [players, setPlayers] = useState<Player[]>();
   const [gameoverInfo, setGameoverInfo] = useState({
     isGameover: false,
     didWin: false,
@@ -29,7 +28,6 @@ function GameView(props: IGameView) {
       setGame(game);
       setUserId(user_id);
       setRole(role);
-      setPlayers(players);
     },
     ({ reason }) => {
       if (reason === 'terminated') {
@@ -48,6 +46,7 @@ function GameView(props: IGameView) {
       });
       channel.on('gamecrash', () => {
         badToast(<p>Oops! The Game Process Crashed</p>);
+        setTimeout(props.onGameEnd, 1000);
       });
     }
   );
@@ -118,14 +117,13 @@ function GameView(props: IGameView) {
       <aside className="flex flex-col min-w-[300px] max-w-[300px]">
         {/* hp */}
         <section className="flex flex-col font-press-start text-[0.65rem]">
-          {players?.map((p) => {
-            const tank = game?.tanks.find(
-              (t) => t.player.user.id === p.user.id
-            );
+          {game?.tanks.map((tank) => {
             return (
-              tank && (
-                <HP key={p.user.id} tank={tank} mine={userId === p.user.id} />
-              )
+              <HP
+                key={tank.player.user.id}
+                tank={tank}
+                mine={userId === tank.player.user.id}
+              />
             );
           })}
         </section>

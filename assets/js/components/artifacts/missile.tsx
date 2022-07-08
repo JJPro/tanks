@@ -15,9 +15,7 @@ function Missile({ missile, unit }: IMissileProps) {
   if (missile.direction == 'left' || missile.direction == 'right') {
     [h, w] = [w, h];
   }
-  return (
-    <Rect x={x - w / 2} y={y - h / 2} width={w} height={h} fill={'white'} />
-  );
+  return <Rect x={x} y={y} width={w} height={h} fill={'white'} />;
 }
 
 export default Missile;

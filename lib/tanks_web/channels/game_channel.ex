@@ -56,8 +56,7 @@ defmodule TanksWeb.GameChannel do
        %{
          game: GameServer.get_state(game_pid),
          user_id: socket.assigns.user_id,
-         role: role,
-         players: room.players
+         role: role
        }, assign(socket, :game, game_pid)}
     else
       _ -> {:error, %{reason: "terminated"}}
@@ -89,11 +88,14 @@ defmodule TanksWeb.GameChannel do
 
   @impl true
   def handle_out("gameover", %{game: game}, socket) do
-    if winner = Game.winner(game) do
-      win? = winner.user.id === socket.assigns.user_id
-      push(socket, "gameover", %{game: game, win?: win?})
-    end
+    win? =
+      if winner = Game.winner(game) do
+        winner.user.id === socket.assigns.user_id
+      else
+        false
+      end
 
+    push(socket, "gameover", %{game: game, win?: win?})
     {:noreply, socket}
   end
 end

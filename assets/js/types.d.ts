@@ -25,14 +25,13 @@ export type RoomStatus = "open" | "full" | "in_game";
 
 export interface Game {
   canvas: {
-    width: number; 
+    width: number;
     height: number;
-  }; 
+  };
   tanks: Tank[];
   missiles: Missile[];
   bricks: Brick[];
   steels: Steel[];
-  dead_tanks: Tank[];
 }
 
 export interface Tank {

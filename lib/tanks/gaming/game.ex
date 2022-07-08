@@ -18,9 +18,7 @@ defmodule Tanks.Gaming.Game do
           tanks: [Tank.t()],
           missiles: [Missile.t()],
           bricks: [Brick.t()],
-          steels: [Steel.t()],
-          # WARN remove if unused
-          dead_tanks: [Tank.t()]
+          steels: [Steel.t()]
         }
   @type direction :: :up | :down | :left | :right
   @typep object :: Brick.t() | Missile.t() | Steel.t() | Tank.t()
@@ -46,8 +44,7 @@ defmodule Tanks.Gaming.Game do
       tanks: tanks,
       missiles: [],
       bricks: map.bricks,
-      steels: map.steels,
-      dead_tanks: []
+      steels: map.steels
     }
   end
 
@@ -92,17 +89,19 @@ defmodule Tanks.Gaming.Game do
   @spec fire(t(), integer()) :: t()
   def fire(game, player_uid) do
     tank = Enum.find(game.tanks, &(&1.player.user.id == player_uid))
+    missile = %Missile{}
+    offset = missile.width / 2
 
     opts =
       case tank.orientation do
-        :up -> %{x: tank.x + tank.width / 2, y: tank.y}
-        :down -> %{x: tank.x + tank.width / 2, y: tank.y + tank.height}
-        :left -> %{x: tank.x, y: tank.y + tank.height / 2}
-        :right -> %{x: tank.x + tank.width, y: tank.y + tank.height / 2}
+        :up -> %{x: tank.x + tank.width / 2 - offset, y: tank.y - offset}
+        :down -> %{x: tank.x + tank.width / 2 - offset, y: tank.y + tank.height}
+        :left -> %{x: tank.x - offset, y: tank.y + tank.height / 2 - offset}
+        :right -> %{x: tank.x + tank.width, y: tank.y + tank.height / 2 - offset}
       end
       |> Map.put(:direction, tank.orientation)
 
-    missile = struct!(Missile, opts)
+    missile = struct!(missile, opts)
 
     %{game | missiles: [missile | game.missiles]}
   end
@@ -120,13 +119,14 @@ defmodule Tanks.Gaming.Game do
 
   @spec gameover?(t()) :: boolean()
   def gameover?(game) do
-    length(game.tanks) <= 1
+    length(Enum.filter(game.tanks, &(&1.hp > 0))) <= 1
   end
 
   @spec winner(t()) :: Player.t() | nil
   def winner(game) do
     if gameover?(game) do
-      hd(game.tanks).player
+      tank = Enum.find(game.tanks, &(&1.hp > 0))
+      tank && tank.player
     else
       nil
     end
@@ -176,7 +176,7 @@ defmodule Tanks.Gaming.Game do
   defp handle_missile_hits_missiles(game) do
     missiles =
       for missile <- game.missiles,
-          Enum.count(game.missiles, &missile_hit?(missile, &1)) == 1 do
+          Enum.count(game.missiles, &missile_hit?(missile, &1)) == 0 do
         missile
       end
 
@@ -191,60 +191,48 @@ defmodule Tanks.Gaming.Game do
   # - missile with tanks
   #   - remove missile
   #   - decrease tank hp
-  #     - remove tank if hp is 0
-  #     - add to game.dead_tanks
   @spec handle_missile_hits_objects(t()) :: t()
   defp handle_missile_hits_objects(game) do
     Enum.reduce(game.missiles, game, fn missile, game ->
-      with brick = Enum.find(game.bricks, &missile_hit?(missile, &1)),
-           :no_hit <- unless(brick, do: :no_hit, else: {:hit_a_brick, brick}),
-           steel = Enum.find(game.steels, &missile_hit?(missile, &1)),
-           :no_hit <- unless(steel, do: :no_hit, else: {:hit_a_steel, steel}),
-           tank = Enum.find(game.tanks, &missile_hit?(missile, &1)),
-           :no_hit <- unless(tank, do: :no_hit, else: {:hit_a_tank, tank}) do
+      with bricks = Enum.filter(game.bricks, &missile_hit?(missile, &1)),
+           :no_hit <- unless(length(bricks) > 0, do: :no_hit, else: {:hit_bricks, bricks}),
+           steels = Enum.filter(game.steels, &missile_hit?(missile, &1)),
+           :no_hit <- unless(length(steels) > 0, do: :no_hit, else: {:hit_steels, steels}),
+           tanks =
+             game.tanks
+             |> Enum.filter(&(&1.hp > 0))
+             |> Enum.filter(&missile_hit?(missile, &1)),
+           :no_hit <- unless(length(tanks) > 0, do: :no_hit, else: {:hit_tanks, tanks}) do
         game
       else
-        {:hit_a_brick, brick} ->
+        {:hit_bricks, bricks} ->
           changeset = %{
             missiles: List.delete(game.missiles, missile),
-            bricks: List.delete(game.bricks, brick)
+            bricks: game.bricks -- bricks
           }
 
-          struct!(game, changeset)
+          Map.merge(game, changeset)
 
-        {:hit_a_steel, _} ->
+        {:hit_steels, _} ->
           changeset = %{
             missiles: List.delete(game.missiles, missile)
           }
 
-          struct!(game, changeset)
+          Map.merge(game, changeset)
 
-        {:hit_a_tank, tank} ->
+        {:hit_tanks, tanks_hit} ->
           # - remove missile,
-          # - update tank hp
-          #   - if tank hp drops to 0
-          #     - remove tank from list
-          #     - add tank to game.dead_tanks
+          # - update hp of tanks
           changeset = %{
-            missiles: List.delete(game.missiles, missile)
+            missiles: List.delete(game.missiles, missile),
+            tanks:
+              Enum.map(
+                game.tanks,
+                fn t -> if t in tanks_hit, do: %{t | hp: t.hp - 1}, else: t end
+              )
           }
 
-          tankp = %{tank | hp: tank.hp - 1}
-
-          changeset =
-            if tankp.hp > 0 do
-              changeset
-              |> Map.put(
-                :tanks,
-                Enum.map(game.tanks, &if(tankp.player == &1.player, do: tankp, else: &1))
-              )
-            else
-              changeset
-              |> Map.put(:tanks, List.delete(game.tanks, tank))
-              |> Map.put(:dead_tanks, [tankp | game.dead_tanks])
-            end
-
-          struct!(game, changeset)
+          Map.merge(game, changeset)
       end
     end)
   end
@@ -253,7 +241,7 @@ defmodule Tanks.Gaming.Game do
   @spec missile_hit?(Missile.t(), Missile.t() | Tank.t() | Brick.t() | Steel.t()) :: boolean()
   defp missile_hit?(missile, object)
 
-  defp missile_hit?(m1, %Missile{} = m2) do
+  defp missile_hit?(%Missile{} = m1, %Missile{} = m2) do
     m1.x == m2.x and m1.y == m2.y and m1.direction != m2.direction
   end
 
@@ -269,6 +257,6 @@ defmodule Tanks.Gaming.Game do
   defp collide?(o1, o2) do
     {x1, y1, r1} = SquareDimension.dimension(o1)
     {x2, y2, r2} = SquareDimension.dimension(o2)
-    (:math.pow(x1 - x2, 2) + :math.pow(y1 - y2, 2)) < :math.pow(r1 + r2, 2)
+    :math.pow(x1 - x2, 2) + :math.pow(y1 - y2, 2) < :math.pow(r1 + r2, 2)
   end
 end

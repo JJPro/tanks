@@ -30,9 +30,11 @@ function GameWorld({ game }: IGameWorldProps) {
       style={styles.stage}
     >
       <Layer>
-        {game.tanks.map((t) => (
-          <Tank key={t.player.user.id} tank={t} unit={unit} />
-        ))}
+        {game.tanks
+          .filter((t) => t.hp > 0)
+          .map((t) => (
+            <Tank key={t.player.user.id} tank={t} unit={unit} />
+          ))}
         {game.bricks.map((b) => (
           <Brick key={`(${b.x}, ${b.y})`} brick={b} unit={unit} />
         ))}

@@ -82,6 +82,11 @@ defmodule Tanks.Gaming.GameServer do
     broadcast!(:lobby, "room_change", %{room: Room.lobby_view(room)})
   end
 
+  @impl true
+  def terminate(reason, _state) do
+    reason
+  end
+
   @doc """
   Game Loop
 
@@ -92,7 +97,6 @@ defmodule Tanks.Gaming.GameServer do
   @impl true
   @spec handle_info(:loop, state()) :: {:noreply, state()} | {:stop, :normal, state()}
   def handle_info(:loop, {room_name, game} = state) do
-    # WARN Hope this works with `self`
     Process.send_after(self(), :loop, @interval)
 
     # Step the game iff current state has missiles in map (to reserve messaging frequency)
