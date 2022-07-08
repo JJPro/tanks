@@ -12,19 +12,19 @@ function Lobby() {
     null,
     (channel) => {
       channel?.on('new_room', ({ room }) => {
-        setRooms([room, ...rooms]);
+        setRooms((rooms) => [room, ...rooms]);
       });
 
       channel?.on('room_change', ({ room: newRoom }) => {
-        const newRooms = rooms.map((room) =>
-          room.name === newRoom.name ? newRoom : room
+        setRooms((rooms) =>
+          rooms.map((room) => (room.name === newRoom.name ? newRoom : room))
         );
-        setRooms(newRooms);
       });
 
       channel?.on('close_room', ({ room: closeRoom }) => {
-        const newRooms = rooms.filter((room) => room.name !== closeRoom.name);
-        setRooms(newRooms);
+        setRooms((rooms) =>
+          rooms.filter((room) => room.name !== closeRoom.name)
+        );
       });
     }
   );
