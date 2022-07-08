@@ -27,7 +27,7 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
           }
         });
     },
-    500,
+    200,
     [term]
   );
 

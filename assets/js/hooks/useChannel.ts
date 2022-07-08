@@ -3,7 +3,17 @@ import { useEffect, useState } from "react";
 import socket from "../user_socket";
 
 export type Callback = ((data: any) => void) | null;
-export function useChannel(topic: string, successCallback?: Callback, errorCallback?: Callback) {
+type ChannelInitFn = (channel: Channel) => void;
+
+/**
+ * Sets up and integrate channel 
+ * @param topic 
+ * @param successCallback 
+ * @param errorCallback 
+ * @param channelInit For setting up channel message handlers 
+ * @returns 
+ */
+export function useChannel(topic: string, successCallback?: Callback, errorCallback?: Callback, channelInit?: ChannelInitFn) {
   const [channel, setChannel] = useState<Channel>();
 
   useEffect(() => {
@@ -12,7 +22,9 @@ export function useChannel(topic: string, successCallback?: Callback, errorCallb
       .join()
       .receive('ok', (data) => successCallback && successCallback(data))
       .receive('error', (resp) => errorCallback ? errorCallback(resp) : console.error('Unable to join', resp));
-      
+
+    channelInit && channelInit(channel);
+
     setChannel(channel);
 
     return () => {

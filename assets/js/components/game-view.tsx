@@ -6,7 +6,7 @@ import { badToast } from '../utils';
 import GameWorld from './game-world';
 import GameoverCountdown from './gameover-countdown';
 import HP from './artifacts/hp';
-import { throttle } from 'lodash';
+import throttle from 'lodash/throttle';
 
 interface IGameView {
   onGameEnd: () => void;
@@ -37,19 +37,20 @@ function GameView(props: IGameView) {
       } else {
         badToast(<p>{reason}</p>);
       }
+    },
+    (channel) => {
+      channel.on('game_tick', ({ game }) => {
+        setGame(game);
+      });
+      channel.on('gameover', ({ game, 'win?': didWin }) => {
+        setGame(game);
+        setGameoverInfo({ isGameover: true, didWin });
+      });
+      channel.on('gamecrash', () => {
+        badToast(<p>Oops! The Game Process Crashed</p>);
+      });
     }
   );
-
-  channel?.on('game_tick', ({ game }) => {
-    setGame(game);
-  });
-  channel?.on('gameover', ({ game, 'win?': didWin }) => {
-    setGame(game);
-    setGameoverInfo({ isGameover: true, didWin });
-  });
-  channel?.on('gamecrash', () => {
-    badToast(<p>Oops! The Game Process Crashed</p>);
-  });
 
   const throttledFire = useCallback(
     throttle(() => channel?.push('fire', {}), 700),

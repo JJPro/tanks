@@ -38,37 +38,38 @@ function RoomView(props: IRoomView) {
         badToast(<p>Room doesn't exist!</p>);
         navigate('/');
       }
+    },
+    (channel) => {
+      channel.on('gamestart', () => {
+        setShowCountdown(true);
+      });
+
+      channel.on('room_change', ({ room }) => {
+        setRoom(room);
+      });
+
+      channel.on('kickedout', ({ room, 'me?': isMe }) => {
+        setRoom(room);
+        if (isMe) {
+          navigate('/');
+          badToast(<p>You were kicked out by host.</p>);
+        }
+      });
+
+      // notify observer to redirect back to lobby, since all players have left the room
+      channel.on('close_room', () => {
+        badToast(
+          <>
+            <p>Room closed.</p>
+          </>
+        );
+
+        setTimeout(() => navigate('/'), 200);
+      });
     }
   );
+
   const { joinRoom, leaveRoom, toggleReady, startGame } = useRoom(channel);
-
-  channel?.on('gamestart', () => {
-    setShowCountdown(true);
-  });
-
-  channel?.on('room_change', ({ room }) => {
-    setRoom(room);
-  });
-
-  channel?.on('kickedout', ({ room, 'me?': isMe }) => {
-    setRoom(room);
-    if (isMe) {
-      navigate('/');
-      badToast(<p>You were kicked out by host.</p>);
-    }
-  });
-
-  // notify observer to redirect back to lobby, since all players have left the room
-  channel?.on('close_room', () => {
-    badToast(
-      <>
-        <p>Room has been closed.</p>
-        <p>Redirecting you back to Lobby</p>
-      </>
-    );
-
-    setTimeout(() => navigate('/'), 5000);
-  });
 
   const onKickout = (player: Player) => {
     channel?.push('kickout', { player_uid: player.user.id });

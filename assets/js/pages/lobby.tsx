@@ -6,23 +6,28 @@ import { RoomLobbyView } from '../types';
 
 function Lobby() {
   const [rooms, setRooms] = useState<RoomLobbyView[]>([]);
-  const channel = useChannel('lobby', ({rooms}) => setRooms(rooms));
+  const channel = useChannel(
+    'lobby',
+    ({ rooms }) => setRooms(rooms),
+    null,
+    (channel) => {
+      channel?.on('new_room', ({ room }) => {
+        setRooms([room, ...rooms]);
+      });
 
-  channel?.on('new_room', ({ room }) => {
-    setRooms([room, ...rooms]);
-  });
+      channel?.on('room_change', ({ room: newRoom }) => {
+        const newRooms = rooms.map((room) =>
+          room.name === newRoom.name ? newRoom : room
+        );
+        setRooms(newRooms);
+      });
 
-  channel?.on('room_change', ({ room: newRoom }) => {
-    const newRooms = rooms.map((room) =>
-      room.name === newRoom.name ? newRoom : room
-    );
-    setRooms(newRooms);
-  });
-
-  channel?.on('close_room', ({ room: closeRoom }) => {
-    const newRooms = rooms.filter((room) => room.name !== closeRoom.name);
-    setRooms(newRooms);
-  });
+      channel?.on('close_room', ({ room: closeRoom }) => {
+        const newRooms = rooms.filter((room) => room.name !== closeRoom.name);
+        setRooms(newRooms);
+      });
+    }
+  );
 
   return (
     <>
