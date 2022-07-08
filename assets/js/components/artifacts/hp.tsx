@@ -7,9 +7,12 @@ interface IHPProps {
 }
 
 function HP({ tank, mine }: IHPProps) {
-  const specialsForMyself = 'bg-white rounded-lg shadow-md my-2';
+  const extra = {
+    forMyself: 'bg-white rounded-lg shadow-md my-2',
+    dead: 'grayscale',
+  };
   return (
-    <div className={`flex gap-x-2 p-4 ${mine && specialsForMyself}`}>
+    <div className={`flex gap-x-2 p-4 ${mine && extra.forMyself} ${tank.hp <= 0 && extra.dead}`}>
       <img
         src={tank.player.sprite}
         alt={`${tank.player.user.name}'s tank`}
