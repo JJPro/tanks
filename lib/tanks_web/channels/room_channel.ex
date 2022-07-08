@@ -57,7 +57,7 @@ defmodule TanksWeb.RoomChannel do
   alias Tanks.Accounts
   alias Tanks.Accounts.User
 
-  intercept ["kickedout"]
+  intercept ["kickedout", "room_change"]
 
   ## User (Player and Observer) Actions
 
@@ -70,16 +70,15 @@ defmodule TanksWeb.RoomChannel do
     case RoomStore.get(room_name) do
       %Room{} = room ->
         %Tanks.Gaming.Artifacts.Player{} = host = Room.host(room)
+        role = Room.user_role(room, socket.assigns.user_id)
 
-        role =
-          cond do
-            host.user.id === socket.assigns.user_id -> :host
-            Enum.any?(room.players, fn p -> p.user.id === socket.assigns.user_id end) -> :player
-            true -> :observer
-          end
-
-        {:ok, %{room: room, role: role, user_id: socket.assigns.user_id, host_id: host.user.id},
-         socket}
+        {:ok,
+         %{
+           room: room,
+           host_id: host.user.id,
+           user_id: socket.assigns.user_id,
+           role: role
+         }, assign(socket, :role, role)}
 
       nil ->
         {:error, %{reason: "not found"}}
@@ -194,6 +193,25 @@ defmodule TanksWeb.RoomChannel do
     me? = player_uid === socket.assigns.user_id
     push(socket, "kickedout", %{room: room, me?: me?})
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_out("room_change", %{room: room}, socket) do
+    role = Room.user_role(room, socket.assigns.user_id)
+
+    changeset = %{
+      room: room,
+      # needs this to highlight host
+      host_id: Room.host(room).user.id
+    }
+
+    if role !== socket.assigns.role do
+      push(socket, "room_change", Map.merge(changeset, %{role_change: role}))
+      {:noreply, assign(socket, :role, role)}
+    else
+      push(socket, "room_change", Map.merge(changeset, %{role_change: false}))
+      {:noreply, socket}
+    end
   end
 
   # Looks up a room and updates it with a callback.

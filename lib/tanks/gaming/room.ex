@@ -23,22 +23,22 @@ defmodule Tanks.Gaming.Room do
           status: atom()
         }
 
-  @sprites {
+  @sprites [
     "/images/tank-cyan.png",
-    "/images/tank-red.png",
+    # "/images/tank-red.png",
     "/images/tank-army-green.png",
-    "/images/tank-yellow.png"
-    # "/images/tank-khaki.png",
-    # "/images/tank-green.png",
-    # "/images/tank-magenta.png",
-    # "/images/tank-purple.png"
-  }
+    "/images/tank-yellow.png",
+    "/images/tank-khaki.png",
+    "/images/tank-green.png",
+    "/images/tank-magenta.png",
+    "/images/tank-purple.png"
+  ]
 
   @spec new(String.t(), %User{}) :: t()
   def new(name, hostuser) do
     host = %Player{
       user: hostuser,
-      sprite: elem(@sprites, 0)
+      sprite: hd(@sprites)
     }
 
     %Room{
@@ -51,9 +51,19 @@ defmodule Tanks.Gaming.Room do
   def add_player(room = %Room{}, user) do
     with nil <- find_player_of_user(room, user),
          :open <- get_status(room) do
+      sprites_taken =
+        for %Player{} = player <- room.players do
+          player.sprite
+        end
+
+      sprite =
+        @sprites
+        |> Enum.shuffle()
+        |> Enum.find(&(&1 not in sprites_taken))
+
       new_player = %Player{
         user: user,
-        sprite: elem(@sprites, length(room.players))
+        sprite: sprite
       }
 
       {:ok, %{room | players: [new_player | room.players]}}
@@ -140,6 +150,15 @@ defmodule Tanks.Gaming.Room do
   @spec host(t()) :: Player.t()
   def host(room) do
     List.last(room.players)
+  end
+
+  @spec user_role(t(), number()) :: :host | :player | :observer
+  def user_role(room, user_id) do
+    cond do
+      host(room).user.id === user_id -> :host
+      Enum.any?(room.players, fn p -> p.user.id === user_id end) -> :player
+      true -> :observer
+    end
   end
 
   @doc """

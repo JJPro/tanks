@@ -44,8 +44,15 @@ function RoomView(props: IRoomView) {
         setShowCountdown(true);
       });
 
-      channel.on('room_change', ({ room }) => {
+      channel.on('room_change', ({ room, host_id, role_change }) => {
         setRoom(room);
+        setHostId(host_id);
+        if (role_change) {
+          setRole(role_change);
+          if (role_change === 'host') {
+            badToast(<p>You are now the new host</p>);
+          }
+        }
       });
 
       channel.on('kickedout', ({ room, 'me?': isMe }) => {
