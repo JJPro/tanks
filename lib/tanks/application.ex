@@ -19,6 +19,7 @@ defmodule Tanks.Application do
       # Start a worker by calling: Tanks.Worker.start_link(arg)
       # {Tanks.Worker, arg}
       Tanks.Store.RoomStore,
+      Tanks.Store.ChatStore,
       {DynamicSupervisor, strategy: :one_for_one, name: Tanks.GameServerSupervisor}
     ]
 
