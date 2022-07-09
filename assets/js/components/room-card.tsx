@@ -44,7 +44,7 @@ function RoomCard(props: IRoomCard) {
   const JoinButton = () => {
     return (
       <button
-        className="btn btn-solid bg-green-600 hover:bg-green-700 px-0 w-32"
+        className="btn btn-green px-0 w-32"
         onClick={() => joinRoom(name)}
       >
         Join
@@ -54,7 +54,10 @@ function RoomCard(props: IRoomCard) {
 
   const ObserveButton = () => {
     return (
-      <button className="btn btn-solid bg-cyan-500 hover:bg-cyan-700 px-0 w-32" onClick={() => observeRoom(name)}>
+      <button
+        className="btn btn-cyan px-0 w-32"
+        onClick={() => observeRoom(name)}
+      >
         Observe
       </button>
     );
@@ -62,7 +65,9 @@ function RoomCard(props: IRoomCard) {
 
   return (
     <article
-      className={'relative rounded-lg m-5 p-4 flex flex-col gap-y-2 items-center'}
+      className={
+        'relative rounded-lg m-5 p-4 flex flex-col gap-y-2 items-center'
+      }
       style={{ backgroundColor: bg }}
     >
       <div

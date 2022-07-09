@@ -92,14 +92,14 @@ function RoomView(props: IRoomView) {
   if (role === 'host' || role === 'player') {
     let readyTailwinds = '';
     if (currentPlayer?.['ready?']) {
-      readyTailwinds = 'text-red-600 border-red-600 hover:bg-red-600';
+      readyTailwinds = 'btn-outline-red';
     } else {
-      readyTailwinds = 'text-green-600 border-green-600 hover:bg-green-600';
+      readyTailwinds = 'btn-outline-green';
     }
     const readyButton = (
       <button
         key="ready"
-        className={`btn btn-outline px-5 py-2 ${readyTailwinds}`}
+        className={`btn px-5 py-2 ${readyTailwinds}`}
         onClick={toggleReady}
       >
         {currentPlayer?.['ready?'] ? 'Cancel' : 'Ready'}
@@ -112,7 +112,7 @@ function RoomView(props: IRoomView) {
     const startButton = (
       <button
         key="start"
-        className="btn btn-solid px-5 py-2 bg-cyan-500 hover:bg-cyan-600"
+        className="btn btn-cyan px-5 py-2"
         onClick={startGame}
       >
         Start
@@ -125,7 +125,7 @@ function RoomView(props: IRoomView) {
     const joinButton = (
       <button
         key="join"
-        className="btn btn-solid px-5 py-2 bg-green-500 hover:bg-green-600"
+        className="btn btn-green px-5 py-2"
         onClick={() => joinRoom(room?.name)}
       >
         Join
@@ -137,7 +137,7 @@ function RoomView(props: IRoomView) {
   const leaveButton = (
     <button
       key="leave"
-      className="btn btn-outline px-5 py-2 text-amber-400 border-amber-400 hover:bg-amber-400"
+      className="btn btn-outline-amber px-5 py-2"
       onClick={leaveRoom}
     >
       Leave

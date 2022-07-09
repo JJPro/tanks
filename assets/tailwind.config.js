@@ -18,5 +18,8 @@ module.exports = {
       ...require('./_tailwindcss/_tw-animations'),
     },
   },
-  plugins: [require('@tailwindcss/forms')],
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('./_tailwindcss/_tw-components'),
+  ],
 };

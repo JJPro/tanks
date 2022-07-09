@@ -14,7 +14,7 @@
 
       <%= email_input f, :email, placeholder: "Enter email", required: true %>
 
-      <%= submit "Log In", class: "btn btn-solid w-full mt-4" %>
+      <%= submit "Log In", class: "btn btn-indigo w-full mt-4" %>
       <small class="text-gray-500">
         Don't have an account?
         <%= link "Register", to: Routes.auth_path(@conn, :register) %>

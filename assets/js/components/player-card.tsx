@@ -12,7 +12,7 @@ function PlayerCard(props: IPlayerCard) {
   const { player, hostId, userId, onKickout } = props;
   const btnKickout = (
     <button
-      className="btn btn-outline px-3 py-1 font-normal text-red-600 border-red-600 hover:bg-red-600"
+      className="btn btn-outline-red px-3 py-1 font-normal"
       onClick={() => onKickout(player)}
     >
       kickout
@@ -35,9 +35,7 @@ function PlayerCard(props: IPlayerCard) {
     <article className="flex flex-col items-center p-3 gap-y-4">
       <div
         className="rounded-lg p-2 border border-gray-300 box-shadow flex flex-col items-center grow"
-        style={
-          player.user.id === hostId ? extraStyles.forHostCard : {}
-        }
+        style={player.user.id === hostId ? extraStyles.forHostCard : {}}
       >
         <header className="font-medium">
           {player.user.id === userId ? 'You' : player.user.name}

@@ -37,7 +37,7 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
   const btnCreate = (
     <button
       key="create"
-      className="btn grow-0 text-blue-500 border-blue-500 hover:bg-blue-500 hover:text-white"
+      className="btn btn-outline-blue grow-0"
       onClick={() => createRoom(term.trim())}
     >
       Create
@@ -46,7 +46,7 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
   const btnJoin = (
     <button
       key="join"
-      className="btn grow-0 text-green-600 border-green-600 hover:bg-green-600 hover:text-white"
+      className="btn btn-outline-green grow-0"
       onClick={() => joinRoom(term.trim())}
     >
       Join
@@ -55,7 +55,7 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
   const btnObserve = (
     <button
       key="observe"
-      className="btn grow-0 text-cyan-500 border-cyan-500 hover:bg-cyan-500 hover:text-white"
+      className="btn btn-outline-cyan grow-0"
       onClick={() => observeRoom(term.trim())}
     >
       Observe
@@ -89,7 +89,7 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
         placeholder="Search or Create A Room"
         aria-label="Search or Create A Room"
         value={term}
-        onChange={(e) => setTerm(e.currentTarget.value)}
+        onChange={(e) => setTerm(e.target.value)}
         onKeyDown={onKeyDown}
       />
       {buttons}
