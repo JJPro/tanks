@@ -13,18 +13,24 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        'press-start': ['"Press Start 2P"', 'cursive']
+        'press-start': ['"Press Start 2P"', 'cursive'],
       },
       animation: {
         wiggle: 'wiggle 1s ease-in-out infinite',
         jello: 'jello 1s linear',
         tada: 'tada 1s linear',
         bounce2: 'bounce2 1s linear infinite',
-        rubberBand: 'rubberBand 1s linear infinite',
+        rubberBand: 'rubberBand 1s linear',
         flip: 'flip 1s linear infinite',
         hinge: 'hinge 2s linear',
         pulse2: 'pulse2 1s ease-in-out infinite',
         flash: 'flash 1.5s linear infinite',
+        bounceIn: 'bounceIn 0.75s linear',
+        bounceInUp: 'bounceInUp 1s linear',
+        bounceInDown: 'bounceInDown 1s linear',
+        lightSpeedInRight: 'lightSpeedInRight 1s ease-out',
+        shakeX: 'shakeX 1s linear',
+        headShake: 'headShake 1s ease-in-out',
       },
       keyframes: {
         wiggle: {
@@ -153,6 +159,128 @@ module.exports = {
           },
           '25%,75%': {
             opacity: 0,
+          },
+        },
+        bounceIn: {
+          '0%,20%,40%,60%,80%,100%': {
+            animationTimingFunction: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+          },
+          '0%': {
+            opacity: '0',
+            transform: 'scale3d(0.3, 0.3, 0.3)',
+          },
+          '20%': {
+            transform: 'scale3d(1.1, 1.1, 1.1)',
+          },
+          '40%': {
+            transform: 'scale3d(0.9, 0.9, 0.9)',
+          },
+          '60%': {
+            opacity: 1,
+            transform: 'scale3d(1.03, 1.03, 1.03)',
+          },
+          '80%': {
+            transform: 'scale3d(0.97, 0.97, 0.97)',
+          },
+          '100%': {
+            opacity: 1,
+            transform: 'scale3d(1, 1, 1)',
+          },
+        },
+        bounceInUp: {
+          '0%,60%,75%,90%,100%': {
+            animationTimingFunction: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+          },
+          '0%': {
+            opacity: 0,
+            transform: 'translate3d(0, 3000px, 0) scaleY(5)',
+          },
+          '60%': {
+            opacity: 1,
+            transform: 'translate3d(0, -20px, 0) scaleY(0.9)',
+          },
+          '75%': {
+            transform: 'translate3d(0, 10px, 0) scaleY(0.95)',
+          },
+          '90%': {
+            transform: 'translate3d(0, -5px, 0) scaleY(0.985)',
+          },
+          '100%': {
+            transform: 'translate3d(0, 0, 0)',
+          },
+        },
+        bounceInDown: {
+          'from,60%,75%,90%,to': {
+            animationTimingFunction: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+          },
+          '0%': {
+            opacity: 0,
+            transform: 'translate3d(0, -3000px, 0) scaleY(3)',
+          },
+          '60%': {
+            opacity: 1,
+            transform: 'translate3d(0, 25px, 0) scaleY(0.9)',
+          },
+          '75%': {
+            transform: 'translate3d(0, -10px, 0) scaleY(0.95)',
+          },
+          '90%': {
+            transform: 'translate3d(0, 5px, 0) scaleY(0.985)',
+          },
+          to: {
+            transform: 'translate3d(0, 0, 0)',
+          },
+        },
+        lightSpeedInRight: {
+          from: {
+            transform: 'translate3d(100%, 0, 0) skewX(-30deg)',
+            opacity: '0',
+          },
+          '60%': {
+            transform: 'skewX(20deg)',
+            opacity: '1',
+          },
+          '80%': {
+            transform: 'skewX(-5deg)',
+          },
+          to: {
+            transform: 'translate3d(0, 0, 0)',
+          },
+        },
+        shakeX: {
+          'from,to': {
+            transform: 'translate3d(0, 0, 0)',
+          },
+          '10%,30%,50%,70%,90%': {
+            transform: 'translate3d(-10px, 0, 0)',
+          },
+          '20%,40%,60%,80%': {
+            transform: 'translate3d(10px, 0, 0)',
+          },
+        },
+        headShake: {
+          '0%': {
+            transform: 'translateX(0)',
+          },
+
+          '6.5%': {
+            transform: 'translateX(-6px) rotateY(-9deg)',
+          },
+
+          '18.5%': {
+            transform: 'translateX(5px) rotateY(7deg)',
+          },
+
+          '31.5%': {
+            transform: 'translateX(-3px) rotateY(-5deg)',
+          },
+
+          '43.5%': {
+            transform: 'translateX(2px) rotateY(3deg)',
+          },
+
+          '50%': {
+            transform: 'translateX(0)',
           },
         },
       },
