@@ -53,7 +53,7 @@ defmodule TanksWeb.RoomChannel do
   """
   use TanksWeb, :channel
   alias Tanks.Gaming.Room
-  alias Tanks.Store.RoomStore
+  alias Tanks.Store.{RoomStore, ChatStore}
   alias Tanks.Accounts
   alias Tanks.Accounts.User
 
@@ -128,10 +128,12 @@ defmodule TanksWeb.RoomChannel do
 
         {:empty_room, nil} ->
           RoomStore.delete(room.name)
+          ChatStore.delete(room.name)
           broadcast(socket, "close_room", %{})
           TanksWeb.Endpoint.broadcast!("lobby", "close_room", %{room: Room.lobby_view(room)})
 
           # Return {:error, _} so that the room is not committed back to store
+          # This is designed behavior of `lookup_and_update/2`
           {:error, "close room"}
       end
     end)

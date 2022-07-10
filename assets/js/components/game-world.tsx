@@ -15,7 +15,7 @@ interface IGameWorldProps {
 }
 
 function GameWorld({ game }: IGameWorldProps) {
-  const unit = 24;
+  const unit = 25;
   const styles = {
     stage: {
       border: `${unit}px solid green`,

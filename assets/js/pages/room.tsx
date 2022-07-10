@@ -10,7 +10,7 @@ function Room() {
 
   return (
     <div className="container mx-auto">
-      <h1 className="text-gray-900 font-medium text-lg text-center my-4 font-press-start">
+      <h1 className="text-gray-900 font-medium text-lg text-center mb-2 font-press-start">
         ROOM: {params.room_name}
       </h1>
       {gameOn ? (

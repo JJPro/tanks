@@ -6,6 +6,8 @@ interface IChatRoomProps {
   roomname: string;
   width: string;
   height: string;
+  prompt?: string;
+  inputRef?: React.RefObject<HTMLInputElement>;
 }
 
 interface IChatMessage {
@@ -24,16 +26,23 @@ function ChatRoom(props: IChatRoomProps) {
     isTyping: false,
     who: '',
   });
+  const ulRef = useRef<HTMLUListElement>(null);
   const promptTimerRef = useRef<number>();
+  const scrollNewMsgToView = () => {
+    const lastMessage = ulRef.current?.querySelector('li:last-of-type');
+    lastMessage?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
   const channel = useChannel(
     'chat:' + props.roomname,
     ({ history }) => {
       setMessages(history);
+      setTimeout(scrollNewMsgToView);
     },
     null,
     (channel) => {
       channel.on('message', (packet) => {
         setMessages((messages) => [...messages, packet]);
+        setTimeout(scrollNewMsgToView);
       });
 
       channel.on('typing_prompt', ({ name }) => {
@@ -55,11 +64,12 @@ function ChatRoom(props: IChatRoomProps) {
   );
 
   const sendMessage = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    e.stopPropagation();
     const message = (e.target as HTMLInputElement).value;
     if (!message) return;
     if (e.key === 'Enter') {
       channel?.push('send', { message });
+      (e.target as HTMLInputElement).value = '';
+    } else if (e.key === 'Escape') {
       (e.target as HTMLInputElement).value = '';
     } else {
       throttledTypingIndicator();
@@ -75,7 +85,10 @@ function ChatRoom(props: IChatRoomProps) {
       </header>
       {/* messages */}
       <div className="grow relative overflow-hidden">
-        <ul className="h-full bg-[#f9f9f9] flex flex-col text-left overflow-y-scroll w-full pb-[100%]">
+        <ul
+          className="h-full bg-[#f9f9f9] flex flex-col text-left overflow-y-scroll w-full pb-[30%]"
+          ref={ulRef}
+        >
           {messages.map((packet, index) => (
             <li
               key={index}
@@ -97,8 +110,9 @@ function ChatRoom(props: IChatRoomProps) {
       <input
         type="text"
         className="grow-0 px-5 py-2 text-sm rounded-none border-0 border-t border-solid border-t-slate-100"
-        placeholder="Press Enter to send"
+        placeholder={props.prompt || 'Press Enter to send'}
         onKeyDown={sendMessage}
+        ref={props.inputRef}
       />
     </div>
   );

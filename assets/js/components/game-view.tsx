@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useChannel } from '../hooks';
 import { Direction, Game, Player } from '../types';
@@ -7,6 +7,7 @@ import GameWorld from './game-world';
 import GameoverCountdown from './gameover-countdown';
 import HP from './artifacts/hp';
 import throttle from 'lodash/throttle';
+import ChatRoom from './chatroom';
 
 interface IGameView {
   onGameEnd: () => void;
@@ -56,34 +57,53 @@ function GameView(props: IGameView) {
     [channel]
   );
 
+  const chatMode = useRef(false);
+  const chatInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     document.addEventListener('keydown', (e) => {
       if (role !== 'player') return;
       let direction: Direction | null = null,
         fire: boolean = false;
-      switch (e.key) {
-        case 'w':
-        case 'ArrowUp':
-          direction = 'up';
-          break;
-        case 's':
-        case 'ArrowDown':
-          direction = 'down';
-          break;
-        case 'a':
-        case 'ArrowLeft':
-          direction = 'left';
-          break;
-        case 'd':
-        case 'ArrowRight':
-          direction = 'right';
-          break;
-        case ' ':
-        case 'Shift':
-          fire = true;
-          break;
-        default:
-          break;
+
+      const composeMessage = (key: string) => {
+        if (key === 'Enter' || key === 'Escape') {
+          chatInputRef.current?.blur();
+          chatMode.current = false;
+        }
+      };
+
+      if (chatMode.current) {
+        composeMessage(e.key);
+      } else {
+        switch (e.key) {
+          case 'w':
+          case 'ArrowUp':
+            direction = 'up';
+            break;
+          case 's':
+          case 'ArrowDown':
+            direction = 'down';
+            break;
+          case 'a':
+          case 'ArrowLeft':
+            direction = 'left';
+            break;
+          case 'd':
+          case 'ArrowRight':
+            direction = 'right';
+            break;
+          case ' ':
+          case 'Shift':
+            fire = true;
+            break;
+          case 'Enter':
+            chatMode.current = true;
+            chatInputRef.current?.focus();
+            break;
+          default:
+            break;
+        }
       }
 
       if (direction) {
@@ -114,7 +134,7 @@ function GameView(props: IGameView) {
         )}
       </div>
       {/* sidebar */}
-      <aside className="flex flex-col min-w-[300px] max-w-[300px]">
+      <aside className="flex flex-col gap-y-4 min-w-[300px] max-w-[300px] items-stretch">
         {/* hp */}
         <section className="flex flex-col font-press-start text-[0.65rem]">
           {game?.tanks.map((tank) => {
@@ -128,8 +148,8 @@ function GameView(props: IGameView) {
           })}
         </section>
         {/* instructions */}
-        <section className="font-press-start text-[0.68rem] px-2">
-          <h5 className="text-center my-2">Instructions</h5>
+        <section className="font-press-start text-[0.65rem] px-2">
+          <h5 className="text-center mb-2">Instructions</h5>
           <table className="text-left leading-5">
             <tbody>
               <tr>
@@ -143,11 +163,22 @@ function GameView(props: IGameView) {
               </tr>
             </tbody>
           </table>
-          <p className="mt-4 leading-5">
+          <p className="mt-2 leading-5">
             Fire wisely, <br />
             tank needs to cool down for{' '}
             <span className="font-semibold">700ms</span> after each firing.
           </p>
+        </section>
+        <section className="grow h-1">
+          {params.room_name && (
+            <ChatRoom
+              roomname={params.room_name}
+              width="100%"
+              height="100%"
+              prompt="Press Enter/ESC to toggle message"
+              inputRef={chatInputRef}
+            />
+          )}
         </section>
       </aside>
     </div>
