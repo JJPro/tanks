@@ -1,7 +1,7 @@
 defmodule Tanks.Store.ChatStore do
   use Agent, restart: :permanent
 
-  @type packet :: {sender :: String.t(), msg :: String.t()}
+  @type packet :: %{sender: String.t(), message: String.t()}
 
   @spec start_link(list()) :: Agent.on_start()
   def start_link(_opts) do

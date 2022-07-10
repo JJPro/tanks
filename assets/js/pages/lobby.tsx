@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ChatRoom from '../components/chatroom';
 import CreateRoomInput from '../components/create-room-input';
 import RoomCard from '../components/room-card';
 import { useChannel } from '../hooks';
@@ -32,22 +33,29 @@ function Lobby() {
   return (
     <>
       <section id="banner-image"></section>
-      <section className="container mx-auto my-6">
-        <CreateRoomInput channel={channel} />
-      </section>
-      <div className="divider container mx-auto">
-        <span className="bg-white p-1 font-bold text-gray-500">OR</span>
-      </div>
-      <section className="container mx-auto my-6">
-        <h2 className="font-semibold text-xl text-gray-600 text-center">
-          Join Others
-        </h2>
-        <div className="flex flex-wrap items-stretch justify-center">
-          {rooms.map((room) => (
-            <RoomCard key={room.name} room={room} channel={channel} />
-          ))}
+      <div className="flex gap-x-6 container py-6">
+        <div className="grow">
+          <section className="pb-4">
+            <CreateRoomInput channel={channel} />
+          </section>
+          <div className="divider-text mx-8">
+            <span className="bg-white p-1 font-bold text-gray-500">OR</span>
+          </div>
+          <section className="mx-auto my-6">
+            <h2 className="font-semibold text-xl text-gray-600 text-center">
+              Join Others
+            </h2>
+            <div className="flex flex-wrap items-stretch justify-center">
+              {rooms.map((room) => (
+                <RoomCard key={room.name} room={room} channel={channel} />
+              ))}
+            </div>
+          </section>
         </div>
-      </section>
+        <aside className="w-[15rem] max-h-[500px] min-h-[500px]">
+          <ChatRoom roomname="lobby" />
+        </aside>
+      </div>
     </>
   );
 }
