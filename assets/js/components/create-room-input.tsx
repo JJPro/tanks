@@ -75,10 +75,13 @@ function CreateRoomInput(props: ICreateRoomInputProps) {
   const onKeyDown = (ev: KeyboardEvent) => {
     const termSanitized = term.trim();
     if (!termSanitized) return;
-    if (ev.key !== 'Enter') return;
-    if (!room) createRoom(termSanitized);
-    else if (room.status === 'open') joinRoom(termSanitized);
-    else observeRoom(termSanitized);
+    if (ev.key === 'Enter') {
+      if (!room) createRoom(termSanitized);
+      else if (room.status === 'open') joinRoom(termSanitized);
+      else observeRoom(termSanitized);
+    } else if (ev.key === 'Escape') {
+      setTerm('');
+    }
   };
 
   return (
