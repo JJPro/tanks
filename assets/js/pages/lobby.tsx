@@ -1,12 +1,21 @@
+import { Presence } from 'phoenix';
 import React, { useState } from 'react';
 import ChatRoom from '../components/chatroom';
 import CreateRoomInput from '../components/create-room-input';
 import RoomCard from '../components/room-card';
 import { useChannel } from '../hooks';
 import { RoomLobbyView } from '../types';
+import { colorHex } from '../utils';
+
+interface IOnlineUser {
+  user_id: number;
+  user_name: string;
+  online_at: string;
+}
 
 function Lobby() {
   const [rooms, setRooms] = useState<RoomLobbyView[]>([]);
+  const [usersOnline, setUsersOnline] = useState<IOnlineUser[]>([]);
   const channel = useChannel(
     'lobby',
     ({ rooms }) => setRooms(rooms),
@@ -26,6 +35,15 @@ function Lobby() {
         setRooms((rooms) =>
           rooms.filter((room) => room.name !== closeRoom.name)
         );
+      });
+
+      const presence = new Presence(channel);
+      presence.onSync(() => {
+        const users: IOnlineUser[] = [];
+        presence.list((user_id, { metas: [first, ..._rest] }) => {
+          users.push(first as IOnlineUser);
+        });
+        setUsersOnline(users);
       });
     }
   );
@@ -54,6 +72,20 @@ function Lobby() {
         </div>
         <ChatRoom roomname="lobby" width="15rem" height="500px" />
       </div>
+      {/* Online Users */}
+      <section>
+        <ul className="flex justify-center -space-x-2 fixed bottom-20 left-0 w-full">
+          {usersOnline.map((u) => (
+            <li
+              key={u.user_id}
+              className="inline-block h-10 w-10 rounded-full object-cover ring-2 ring-white"
+              aria-label={u.user_name}
+              data-balloon-pos="up"
+              style={{ backgroundColor: colorHex(u.user_id) }}
+            ></li>
+          ))}
+        </ul>
+      </section>
     </>
   );
 }

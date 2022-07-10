@@ -76,6 +76,7 @@ defmodule Tanks.MixProject do
   # Used in `watchers` config in `dev.exs`
   def tailwind_watcher do
     path = Path.expand("./priv/static/assets/app.tailwind.css", __DIR__)
+
     if not File.exists?(path) do
       DartSass.install_and_run(:default, ~w(--embed-source-map --source-map-urls=absolute))
     end

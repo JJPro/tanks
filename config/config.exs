@@ -43,7 +43,7 @@ config :tailwind,
 config :dart_sass,
   version: "1.49.11",
   default: [
-    args: ~w(css/app.scss ../priv/static/assets/app.tailwind.css),
+    args: ~w(--load-path=node_modules css/app.scss ../priv/static/assets/app.tailwind.css),
     cd: Path.expand("../assets", __DIR__)
   ]
 

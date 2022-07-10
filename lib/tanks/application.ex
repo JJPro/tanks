@@ -20,7 +20,8 @@ defmodule Tanks.Application do
       # {Tanks.Worker, arg}
       Tanks.Store.RoomStore,
       Tanks.Store.ChatStore,
-      {DynamicSupervisor, strategy: :one_for_one, name: Tanks.GameServerSupervisor}
+      {DynamicSupervisor, strategy: :one_for_one, name: Tanks.GameServerSupervisor},
+      TanksWeb.Presence
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

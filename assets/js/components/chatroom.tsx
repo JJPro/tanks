@@ -1,6 +1,7 @@
 import throttle from 'lodash/throttle';
 import React, { useCallback, useRef, useState } from 'react';
 import { useChannel } from '../hooks';
+import { requireAuth } from '../utils';
 
 interface IChatRoomProps {
   roomname: string;
@@ -67,6 +68,8 @@ function ChatRoom(props: IChatRoomProps) {
     const message = (e.target as HTMLInputElement).value;
     if (!message) return;
     if (e.key === 'Enter') {
+      requireAuth();
+
       channel?.push('send', { message });
       (e.target as HTMLInputElement).value = '';
     } else if (e.key === 'Escape') {

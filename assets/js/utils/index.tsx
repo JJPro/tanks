@@ -31,3 +31,15 @@ export function badToast(element: ReactElement) {
     );
   });
 }
+
+export function colorHex(id: number) {
+  function toHexString(number: number) {
+    let hex = Number(number % 256).toString(16);
+    if (hex.length < 2) hex = '0' + hex;
+    return hex;
+  }
+  const r = toHexString(id * 13);
+  const g = toHexString(id * 17);
+  const b = toHexString(id * 113);
+  return `#${r}${g}${b}`;
+}

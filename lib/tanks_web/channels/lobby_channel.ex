@@ -44,9 +44,12 @@ defmodule TanksWeb.LobbyChannel do
   use TanksWeb, :channel
   alias Tanks.Store.RoomStore
   alias Tanks.Gaming.Room
+  alias TanksWeb.Presence
 
   @impl true
   def join("lobby", _payload, socket) do
+    send(self(), :after_join)
+
     rooms =
       RoomStore.get_all()
       |> Enum.map(fn {_name, room} ->
@@ -102,5 +105,21 @@ defmodule TanksWeb.LobbyChannel do
       nil ->
         {:reply, {:error, %{reason: "not found"}}, socket}
     end
+  end
+
+  @impl true
+  def handle_info(:after_join, socket) do
+    if socket.assigns[:user_id] do
+      {:ok, _} =
+        Presence.track(socket, socket.assigns.user_id, %{
+          online_at: inspect(System.system_time(:second)),
+          user_name: Tanks.Accounts.get_user!(socket.assigns.user_id).name,
+          user_id: socket.assigns.user_id
+        })
+
+      push(socket, "presence_state", Presence.list(socket))
+    end
+
+    {:noreply, socket}
   end
 end
