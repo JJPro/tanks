@@ -1,14 +1,13 @@
 import React, { ReactElement, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useChannel, useRoom } from '../hooks';
-import { Player, Room } from '../types';
+import { GameStatus, Player, Room } from '../types';
 import { badToast } from '../utils';
 import ChatRoom from './chatroom';
-import GamestartCountdown from './gamestart-countdown';
 import PlayerCard from './player-card';
 
 interface IRoomView {
-  onGameStart: () => void;
+  onGameStart: (status: GameStatus) => void;
 }
 
 type Role = 'observer' | 'host' | 'player';
@@ -18,7 +17,6 @@ function RoomView(props: IRoomView) {
   const [userId, setUserId] = useState();
   const [hostId, setHostId] = useState();
   const [role, setRole] = useState<Role>('observer');
-  const [showCountdown, setShowCountdown] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
 
@@ -31,7 +29,7 @@ function RoomView(props: IRoomView) {
       setRole(role);
 
       if (room.status == 'in_game') {
-        props.onGameStart();
+        props.onGameStart('already_running');
       }
     },
     ({ reason }) => {
@@ -42,7 +40,7 @@ function RoomView(props: IRoomView) {
     },
     (channel) => {
       channel.on('gamestart', () => {
-        setShowCountdown(true);
+        props.onGameStart('booting_up');
       });
 
       channel.on('room_change', ({ room, host_id, role_change }) => {
@@ -81,11 +79,6 @@ function RoomView(props: IRoomView) {
 
   const onKickout = (player: Player) => {
     channel?.push('kickout', { player_uid: player.user.id });
-  };
-
-  const onCountdownEnd = () => {
-    setShowCountdown(false);
-    props.onGameStart();
   };
 
   const currentPlayer = room?.players.find((p) => p.user.id === userId);
@@ -149,9 +142,6 @@ function RoomView(props: IRoomView) {
   return (
     <div className="flex justify-evenly gap-x-6">
       <div className="">
-        {showCountdown && (
-          <GamestartCountdown onCountdownEnd={onCountdownEnd} />
-        )}
         <div className="flex flex-wrap items-stretch justify-center gap-4">
           {room?.players.map((player) => (
             <PlayerCard

@@ -1,15 +1,18 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useChannel } from '../hooks';
-import { Direction, Game, Player } from '../types';
+import { Direction, Game, GameStatus } from '../types';
 import { badToast } from '../utils';
 import GameWorld from './game-world';
 import GameoverCountdown from './gameover-countdown';
 import HP from './artifacts/hp';
 import throttle from 'lodash/throttle';
 import ChatRoom from './chatroom';
+import GamestartCountdown from './gamestart-countdown';
 
 interface IGameView {
+  status: GameStatus;
+  onFinishingStart: () => void;
   onGameEnd: () => void;
 }
 type Role = 'observer' | 'player';
@@ -22,6 +25,8 @@ function GameView(props: IGameView) {
     isGameover: false,
     didWin: false,
   });
+  const [activateKeyboardControls, setActivateKeyboardControls] =
+    useState(false);
   const params = useParams();
   const channel = useChannel(
     'game:' + params.room_name,
@@ -61,6 +66,7 @@ function GameView(props: IGameView) {
   const chatInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (!activateKeyboardControls) return;
     document.addEventListener('keydown', (e) => {
       if (role !== 'player') return;
       let direction: Direction | null = null,
@@ -115,8 +121,15 @@ function GameView(props: IGameView) {
         throttledFire();
       }
     });
-  }, [role, channel]);
+  }, [role, channel, activateKeyboardControls]);
 
+  useEffect(() => {
+    if (props.status === 'already_running') {
+      setActivateKeyboardControls(true);
+    }
+  }, [props.status]);
+
+  console.log('game-view: props.status', props.status);
   return (
     <div
       className="container mx-auto px-2 flex justify-center gap-x-4 focus:outline-none"
@@ -125,6 +138,14 @@ function GameView(props: IGameView) {
       {/* game world */}
       <div className="relative bg-black">
         {game && <GameWorld game={game} />}
+        {props.status === 'booting_up' && (
+          <GamestartCountdown
+            onCountdownEnd={() => {
+              setActivateKeyboardControls(true);
+              props.onFinishingStart();
+            }}
+          />
+        )}
 
         {gameoverInfo.isGameover && (
           <GameoverCountdown

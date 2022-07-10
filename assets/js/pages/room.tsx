@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import GameView from '../components/game-view';
 import RoomView from '../components/room-view';
-import { Room } from '../types';
+import { GameStatus, Room } from '../types';
 
 function Room() {
-  const [gameOn, setGameOn] = useState(false);
+  const [gameStatus, setGameStatus] = useState<GameStatus>('not_running');
+
   const params = useParams();
 
   return (
@@ -13,10 +14,14 @@ function Room() {
       <h1 className="text-gray-900 font-medium text-lg text-center mb-2 font-press-start">
         ROOM: {params.room_name}
       </h1>
-      {gameOn ? (
-        <GameView onGameEnd={() => setGameOn(false)} />
+      {gameStatus === 'not_running' ? (
+        <RoomView onGameStart={(status: GameStatus) => setGameStatus(status)} />
       ) : (
-        <RoomView onGameStart={() => setGameOn(true)} />
+        <GameView
+          status={gameStatus}
+          onFinishingStart={() => setGameStatus('already_running')}
+          onGameEnd={() => setGameStatus('not_running')}
+        />
       )}
     </div>
   );

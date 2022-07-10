@@ -22,6 +22,7 @@ export interface RoomLobbyView {
 }
 
 export type RoomStatus = "open" | "full" | "in_game";
+export type GameStatus = "already_running" | "booting_up" | "not_running";
 
 export interface Game {
   canvas: {
