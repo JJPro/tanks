@@ -52,9 +52,7 @@ function Lobby() {
             </div>
           </section>
         </div>
-        <aside className="w-[15rem] max-h-[500px] min-h-[500px]">
-          <ChatRoom roomname="lobby" />
-        </aside>
+        <ChatRoom roomname="lobby" width="15rem" height="500px" />
       </div>
     </>
   );

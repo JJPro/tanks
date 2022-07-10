@@ -4,6 +4,8 @@ import { useChannel } from '../hooks';
 
 interface IChatRoomProps {
   roomname: string;
+  width: string;
+  height: string;
 }
 
 interface IChatMessage {
@@ -64,7 +66,10 @@ function ChatRoom(props: IChatRoomProps) {
     }
   };
   return (
-    <div className="shadow flex flex-col border rounded-sm w-full h-full">
+    <div
+      className="shadow flex flex-col border rounded-sm"
+      style={{ width: props.width, height: props.height }}
+    >
       <header className="p-2 font-semibold text-center text-lg border-b">
         Chat Room
       </header>

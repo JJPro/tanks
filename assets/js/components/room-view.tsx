@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useChannel, useRoom } from '../hooks';
 import { Player, Room } from '../types';
 import { badToast } from '../utils';
+import ChatRoom from './chatroom';
 import GamestartCountdown from './gamestart-countdown';
 import PlayerCard from './player-card';
 
@@ -146,24 +147,31 @@ function RoomView(props: IRoomView) {
   controls.push(leaveButton);
 
   return (
-    <>
-      {showCountdown && <GamestartCountdown onCountdownEnd={onCountdownEnd} />}
-      <div className="flex flex-wrap items-stretch justify-center gap-4">
-        {room?.players.map((player) => (
-          <PlayerCard
-            key={player.user.id}
-            player={player}
-            hostId={hostId}
-            userId={userId}
-            onKickout={onKickout}
-          />
-        ))}
+    <div className="flex justify-evenly gap-x-6">
+      <div className="">
+        {showCountdown && (
+          <GamestartCountdown onCountdownEnd={onCountdownEnd} />
+        )}
+        <div className="flex flex-wrap items-stretch justify-center gap-4">
+          {room?.players.map((player) => (
+            <PlayerCard
+              key={player.user.id}
+              player={player}
+              hostId={hostId}
+              userId={userId}
+              onKickout={onKickout}
+            />
+          ))}
+        </div>
+        {/* Room Controls */}
+        <div className="flex items-center justify-center flex-wrap gap-4 mt-4">
+          {controls}
+        </div>
       </div>
-      {/* Room Controls */}
-      <div className="flex items-center justify-center flex-wrap gap-4 mt-4">
-        {controls}
-      </div>
-    </>
+      {params.room_name && (
+        <ChatRoom roomname={params.room_name} width="15rem" height="500px" />
+      )}
+    </div>
   );
 }
 
