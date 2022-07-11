@@ -129,7 +129,6 @@ function GameView(props: IGameView) {
     }
   }, [props.status]);
 
-  console.log('game-view: props.status', props.status);
   return (
     <div
       className="container mx-auto px-2 flex justify-center gap-x-4 focus:outline-none"

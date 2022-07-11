@@ -12,7 +12,6 @@ function GamestartCountdown(props: IGamestartCountdown) {
     e.preventDefault();
     e.stopPropagation();
   };
-  console.log('>>>>');
 
   return (
     <div
