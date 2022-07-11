@@ -24,11 +24,11 @@ defmodule Tanks.Gaming.Room do
         }
 
   @sprites [
+    "/images/tank-khaki.png",
     "/images/tank-cyan.png",
-    # "/images/tank-red.png",
+    "/images/tank-red.png",
     "/images/tank-army-green.png",
     "/images/tank-yellow.png",
-    "/images/tank-khaki.png",
     "/images/tank-green.png",
     "/images/tank-magenta.png",
     "/images/tank-purple.png"

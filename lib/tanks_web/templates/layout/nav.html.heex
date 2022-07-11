@@ -1,7 +1,7 @@
 <nav class="flex items-center justify-between py-3">
   <%# logo %>
-  <%= link to: Routes.page_path(@conn, :index), aria_label: "Tanks Game", data_balloon_pos: :down do %>
-    <img class="w-8 h-8" src={Routes.static_path(@conn, "/images/tank-army-green.png")} alt="site logo">
+  <%= link to: Routes.page_path(@conn, :index), aria_label: "Home", data_balloon_pos: :down do %>
+    <img class="w-8 h-8" src={Routes.static_path(@conn, "/images/tank-cyan.png")} alt="site logo">
   <% end %>
     
   <%# login OR userprofile + logout %>
