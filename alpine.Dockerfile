@@ -59,7 +59,7 @@ RUN mix release
 # the compiled release and other runtime necessities
 FROM ${RUNNER_IMAGE}
 
-RUN apk add --update bash openssl 
+RUN apk add --update --no-cache libstdc++ bash openssl ncurses-libs
 
 WORKDIR "/app"
 RUN chown nobody /app
