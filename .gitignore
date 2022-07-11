@@ -32,4 +32,7 @@ tanks-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# .env.prod contains docker env SECRET_KEY_BASE
+.env*
+
 TODO.md

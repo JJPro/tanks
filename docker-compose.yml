@@ -1,0 +1,22 @@
+version: '3.5'
+services:
+  app: 
+    image: tanks:1.0.0
+    restart: always
+    ports: 
+      - "4000:4000"
+    environment:
+      - DATABASE_URL=ecto://postgres:postgres@db/tanks_prod
+      - PHX_HOST=localhost
+    env_file:
+      - .env.prod # defines SECRET_KEY_BASE
+    depends_on: 
+      - db
+  
+  db: 
+    image: postgres:14.4-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=tanks_prod
