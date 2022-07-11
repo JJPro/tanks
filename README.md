@@ -1,4 +1,8 @@
-# Multi-player Tanks Game in Elixir/Phoenix
+# What This Is (Multi-player Tanks Game in Elixir/Phoenix)
+
+## Development Design Notes
+
+[Design Notes](./DESIGN.md)
 
 ## Description
 
@@ -29,11 +33,11 @@ The main page displays open rooms and a button to create a new room.
 
 The screen is partitioned into 2 main parts.
 
-On the left is the game board(75% on left).
+On the left is the game board.
 The top portion of the board shows game instructions, player name, and health level.
 The lower portion of the board is the gaming area.
 
-On the right is a chat room(25% on right).
+On the right is a chat room.
 Players can send messages to each other with their user name (or tank color).
 (Each tank is assigned a color)
 
