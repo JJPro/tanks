@@ -117,6 +117,9 @@ React:
 - SPA
 - Custom Hooks, extracting logics for joining channels
 - React Portal
+- Component Library
+CSS: 
+- Custom Tailwind Plugins for creating dynamic components
 
 # References: 
 
