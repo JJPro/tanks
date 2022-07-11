@@ -10,9 +10,14 @@ jobs:
 
   build:
 
-    runs-on: debian-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag tanks:1.0.0
+      run: docker build . --file Dockerfile --tag jjpro/tanks:latest
+    - name: Login to DockerHub Registry
+      run: echo ${{secrets.DOCKERHUB_PASSWORD}} | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
+    - name: Push the image 
+      run: docker push jjpro/tanks:latest
+      
