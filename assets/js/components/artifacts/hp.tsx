@@ -13,7 +13,7 @@ function HP({ tank, mine }: IHPProps) {
   };
   return (
     <div
-      className={`flex p-4 ${mine && extra.forMyself} ${
+      className={`flex p-4 gap-x-1.5 ${mine && extra.forMyself} ${
         tank.hp <= 0 && extra.dead
       }`}
     >

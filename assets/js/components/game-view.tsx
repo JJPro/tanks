@@ -184,9 +184,9 @@ function GameView(props: IGameView) {
             </tbody>
           </table>
           <p className="mt-2 leading-5">
-            Fire wisely, <br />
-            tank needs to cool down for{' '}
-            <span className="font-semibold">700ms</span> after each firing.
+            FIRE WISELY, <br />
+            Tank needs <span className="font-semibold">700ms</span> of cool down
+            between each firing.
           </p>
         </section>
         <section className="grow h-1">
