@@ -28,7 +28,7 @@ function RoomView(props: IRoomView) {
       setUserId(user_id);
       setRole(role);
 
-      if (room.status == 'in_game') {
+      if (room.status == 'running') {
         props.onGameStart('already_running');
       }
     },

@@ -21,7 +21,7 @@ export interface RoomLobbyView {
   status: RoomStatus;
 }
 
-export type RoomStatus = "open" | "full" | "in_game";
+export type RoomStatus = "open" | "full" | "running";
 export type GameStatus = "already_running" | "booting_up" | "not_running";
 
 export interface Game {

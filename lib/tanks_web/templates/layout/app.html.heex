@@ -3,7 +3,7 @@
     <%= render "nav.html", assigns %>
   <% end %>
 </header>
-<main>
+<main class="min-h-[calc(100vh - 120px)] flex flex-col">
   <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
   <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
   <%= @inner_content %>

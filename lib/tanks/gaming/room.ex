@@ -70,7 +70,7 @@ defmodule Tanks.Gaming.Room do
     else
       %Player{} -> {:ok, room}
       :full -> {:error, "room is full"}
-      :in_game -> {:error, "game already started"}
+      :running -> {:error, "game already started"}
     end
   end
 
@@ -92,10 +92,10 @@ defmodule Tanks.Gaming.Room do
     end
   end
 
-  @spec get_status(t()) :: :open | :full | :in_game
+  @spec get_status(t()) :: :open | :full | :running
   def get_status(room) do
     cond do
-      room.game -> :in_game
+      room.game -> :running
       length(room.players) == 4 -> :full
       true -> :open
     end

@@ -51,41 +51,42 @@ function Lobby() {
   return (
     <>
       <section id="banner-image"></section>
-      <div className="flex gap-x-6 container py-6">
-        <div className="grow">
+      <div className="grow flex items-stretch gap-x-6 container py-6">
+        {/* main area */}
+        <div className="grow flex flex-col">
           <section className="pb-4">
             <CreateRoomInput channel={channel} />
           </section>
           <div className="divider-text mx-8">
             <span className="bg-white p-1 font-bold text-gray-500">OR</span>
           </div>
-          <section className="mx-auto my-6">
-            <h2 className="font-semibold text-xl text-gray-600 text-center">
-              Join Others
-            </h2>
-            <div className="flex flex-wrap items-stretch justify-center">
-              {rooms.map((room) => (
-                <RoomCard key={room.name} room={room} channel={channel} />
+          <h2 className="m-3 font-semibold text-xl text-gray-600 text-center">
+            Join Others
+          </h2>
+          {/* Room Cards */}
+          <div className="grow flex flex-wrap items-stretch justify-center">
+            {rooms.map((room) => (
+              <RoomCard key={room.name} room={room} channel={channel} />
+            ))}
+          </div>
+          {/* Online Users */}
+          <div className="justify-self-end">
+            <ul className="flex justify-center -space-x-2 w-full">
+              {usersOnline.map((u) => (
+                <li
+                  key={u.user_id}
+                  className="inline-block h-7 w-7 rounded-full object-cover ring-2 ring-white"
+                  aria-label={u.user_name}
+                  data-balloon-pos="up"
+                  style={{ backgroundColor: colorHex(u.user_id) }}
+                ></li>
               ))}
-            </div>
-          </section>
+            </ul>
+          </div>
         </div>
+        {/* sidebar */}
         <ChatRoom roomname="lobby" width="15rem" height="500px" />
       </div>
-      {/* Online Users */}
-      <section>
-        <ul className="flex justify-center -space-x-2 fixed bottom-20 left-0 w-full">
-          {usersOnline.map((u) => (
-            <li
-              key={u.user_id}
-              className="inline-block h-10 w-10 rounded-full object-cover ring-2 ring-white"
-              aria-label={u.user_name}
-              data-balloon-pos="up"
-              style={{ backgroundColor: colorHex(u.user_id) }}
-            ></li>
-          ))}
-        </ul>
-      </section>
     </>
   );
 }

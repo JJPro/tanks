@@ -29,7 +29,7 @@ function RoomCard(props: IRoomCard) {
       statusBgColor = '#f8f1d3';
       break;
 
-    case 'in_game':
+    case 'running':
       bg = '#adecb7';
       statusBorderColor = '#80e08e';
       statusBgColor = '#bbebc1';
@@ -66,7 +66,7 @@ function RoomCard(props: IRoomCard) {
   return (
     <article
       className={
-        'relative rounded-lg m-5 p-4 flex flex-col gap-y-2 items-center'
+        'relative rounded-lg m-5 p-4 flex flex-col gap-y-2 items-center h-min'
       }
       style={{ backgroundColor: bg }}
     >
@@ -79,7 +79,9 @@ function RoomCard(props: IRoomCard) {
       >
         {status}
       </div>
-      <header className="font-semibold text-2xl mt-2 grow">{name}</header>
+      <header className="font-semibold text-lg mt-2 text-center w-32 truncate">
+        {name}
+      </header>
       {status == 'open' && <JoinButton />}
       <ObserveButton />
     </article>

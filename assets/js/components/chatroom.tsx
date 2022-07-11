@@ -80,7 +80,7 @@ function ChatRoom(props: IChatRoomProps) {
   };
   return (
     <div
-      className="shadow flex flex-col border rounded-sm"
+      className="shadow flex flex-col border rounded-sm shrink-0"
       style={{ width: props.width, height: props.height }}
     >
       <header className="p-2 font-semibold text-center text-lg border-b">
