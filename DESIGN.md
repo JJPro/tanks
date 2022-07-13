@@ -113,13 +113,18 @@ Elixir
 - PubSub
 - lookup_and_update/2
 - Phoenix Presence to track users online
+
+
 React: 
 - SPA
 - Custom Hooks, extracting logics for joining channels
-- React Portal
 - Component Library
+
+
 CSS: 
 - Custom Tailwind Plugins for creating dynamic components
+
+Docker
 
 # References: 
 

@@ -1,8 +1,16 @@
-# What This Is (Multi-player Tanks Game in Elixir/Phoenix)
+# Multi-player Tanks Game built with Elixir/Phoenix
 
-## Development Design Notes
+## Live at [tanks.jjpro.me](https://tanks.jjpro.me)
 
-[Design Notes](./DESIGN.md)
+![Game Play](.github/assets/gameworld.png)
+
+## Docker
+
+https://hub.docker.com/repository/docker/jjpro/tanks
+
+## Dev Design Notes
+
+Notes for myself during dev: [Design Notes](./DESIGN.md).
 
 ## Description
 
