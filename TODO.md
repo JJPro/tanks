@@ -86,7 +86,7 @@
 5.  `MIX_ENV=prod mix release`
 
 
-# Future Extractions
+# Feature Extractions
 
 - Custom Hooks Library
 - Component Library
