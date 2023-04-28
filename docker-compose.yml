@@ -1,7 +1,9 @@
 version: '3.5'
 services:
   app: 
-    image: tanks:1.0.0
+    # image: jjpro/tanks:latest
+    build:
+      context: .
     restart: always
     ports: 
       - "4000:4000"

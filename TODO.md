@@ -88,7 +88,34 @@
 
 # Feature Extractions
 
-- Custom Hooks Library
-- Component Library
-- Tailwind Plugins
+- ✅ Custom Hooks Library
+- ✅ Tailwind Plugins
+- ✅ Component Library
+- ✅ Gutenberg Multi-block setup 
+- STAR Analysis
 
+# Techniques 
+
+Elixir
+- composition 
+- custom Protocols & @derive (get origin of game artifacts)
+- module attributes
+- meta/macro programming 
+- comprehensions 
+- Agent, GenServer, Channel, Presence
+- DynamicSupervisor to supervise game processes
+- PubSub
+- lookup_and_update/2
+- Phoenix Presence to track users online
+
+
+React: 
+- SPA
+- Custom Hooks, extracting logics for joining channels
+- Component Library
+
+
+CSS: 
+- Custom Tailwind Plugins for creating dynamic components
+
+Docker
