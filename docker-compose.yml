@@ -1,24 +1,22 @@
 version: '3.5'
 services:
   app: 
-    # image: jjpro/tanks:latest
-    build:
-      context: .
-    restart: always
+    image: jjpro/tanks:latest
+    # build:
+    #   context: .
+    restart: unless-stopped
     ports: 
       - "4000:4000"
     environment:
-      - DATABASE_URL=ecto://postgres:postgres@db/tanks_prod
-      - PHX_HOST=localhost
+      - PHX_HOST=localhost # change this to your domain or IP of deployment
+      - POSTGRES_HOST=db
     env_file:
-      - .env.prod # defines SECRET_KEY_BASE
+      - .env
     depends_on: 
       - db
   
   db: 
     image: postgres:14.4-alpine
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=tanks_prod
+    restart: unless-stopped
+    env_file:
+      - .env

@@ -8,6 +8,19 @@
 
 https://hub.docker.com/repository/docker/jjpro/tanks
 
+An example [docker-compose](./docker-compose.yml) file is provided to demonstrate how to use the docker image. 
+
+### Environment Variables 
+
+| Variable          | Description                          | Required | Default   |
+| ----------------- | ------------------------------------ | -------- | --------- |
+| PHX_Host          | External URL of deployed application | optional | localhost |
+| POSTGRES_HOST     | hostname or IP of psql server        | required |           |
+| POSTGRES_USER     | database user                        | required |           |
+| POSTGRES_PASSWORD | database password                    | required |           |
+| POSTGRES_DB       | database name                        | required |           |
+
+
 ## Architecture & Techniques
 
 [Architecture Design & Techniques](./DESIGN.md)

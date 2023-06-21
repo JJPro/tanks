@@ -89,7 +89,7 @@ function ChatRoom(props: IChatRoomProps) {
       {/* messages */}
       <div className="grow relative overflow-hidden">
         <ul
-          className="h-full bg-[#f9f9f9] flex flex-col text-left overflow-y-scroll w-full pb-[30%]"
+          className="h-full bg-[#f9f9f9] flex flex-col text-left overflow-x-hidden overflow-y-scroll w-full pb-[30%]"
           ref={ulRef}
         >
           {messages.map((packet, index) => (
