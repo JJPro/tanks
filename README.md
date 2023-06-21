@@ -1,4 +1,7 @@
+[![Docker Image CI](https://github.com/JJPro/tanks/actions/workflows/docker-image.yml/badge.svg)](https://github.com/JJPro/tanks/actions/workflows/docker-image.yml)
+
 # Multi-player Tanks Game built with Elixir/Phoenix
+
 
 ## Live at [tanks.jjpro.me](https://tanks.jjpro.me)
 
