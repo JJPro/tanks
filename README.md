@@ -9,7 +9,7 @@
 
 ## Docker
 
-https://hub.docker.com/repository/docker/jjpro/tanks
+https://hub.docker.com/r/jjpro/tanks
 
 An example [docker-compose](./docker-compose.yml) file is provided to demonstrate how to use the docker image. 
 
