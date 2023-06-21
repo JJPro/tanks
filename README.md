@@ -8,11 +8,11 @@
 
 https://hub.docker.com/repository/docker/jjpro/tanks
 
-## Dev Design Notes
+## Architecture & Techniques
 
-Notes for myself during dev: [Design Notes](./DESIGN.md).
+[Architecture Design & Techniques](./DESIGN.md)
 
-## Description
+## Game Description
 
 The GAME is a multi-player online tank game with a builtin chat room.
 It is an exciting game that requires 2 to 4 players to play.
@@ -31,13 +31,13 @@ A 7-second countdown appears after game start.
 During the gameplay, new comers are given the option to observe
 (Popup alert with button such that "Game already started, click to observe").
 
-## What players will see on screen
+### What players will see on screen
 
-### The Entry Page:
+#### The Entry Page:
 
 The main page displays open rooms and a button to create a new room.
 
-### Game Room:
+#### Game Room:
 
 The screen is partitioned into 2 main parts.
 
@@ -52,7 +52,7 @@ Players can send messages to each other with their user name (or tank color).
 The game board contains player tanks and randomly placed walls of two kinds.
 Brick walls can be destroyed, and metal walls can't.
 
-## What kind of actions they can take
+### What kind of actions they can take
 
 Once the player is in the game, he/she can type message and send to other players.
 Movement of tanks are controlled by arrow keys, and shoot missiles by hitting the spacebar.
@@ -63,6 +63,6 @@ Each tank are able take 3 missile hits.
 So a 4th hit kills the tank and the player operating that tank becomes observer of the game.
 
 
-## How a player can win
+### How a player can win
 
 The last survivor wins!
