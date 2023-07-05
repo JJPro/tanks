@@ -1,23 +1,36 @@
-name: Docker Image CI
+name: Docker Image CD
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ['master']
   pull_request:
-    branches: [ "master" ]
+    branches: ['master']
 
 jobs:
-
   build:
-
+    if: ${{ !contains(github.head_commit.message, '[skip docker_build]') }}
+    name: Build and publish Docker image
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag jjpro/tanks:latest
-    - name: Login to DockerHub Registry
-      run: echo ${{secrets.DOCKERHUB_PASSWORD}} | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
-    - name: Push the image 
-      run: docker push jjpro/tanks:latest
-      
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag jjpro/tanks:latest
+      - name: Login to DockerHub Registry
+        run: echo ${{secrets.DOCKERHUB_PASSWORD}} | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
+      - name: Push the image
+        run: docker push jjpro/tanks:latest
+
+  deploy:
+    if: ${{ !contains(github.head_commit.message, '[skip deploy]') }}
+    name: Deploy new image on production server
+    runs-on: ubuntu-latest
+    # needs: build
+    steps:
+      - name: Recreate container on production server
+        uses: D3rHase/ssh-command-action@v0.2.2
+        with:
+          host: ${{ secrets.HOST }}
+          user: ${{ secrets.USER }}
+          private_key: ${{ secrets.PRIVATE_KEY }}
+          command: cd /docker/docker-compose/tanks && docker compose pull && docker compose up -d
